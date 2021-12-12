@@ -34,7 +34,8 @@ edit the following section with the IP address(es) and names of your unit(s):
 	<#######################################################################################################################-->
 When you have a single unit, only configure the IP address and name of the first unit. Set the IP addresses of the other 2 units to "nnn.nnn.nnn.nnn"  and the names to " Undefined" this will prevent the selection buttons on the top of the screen not to appear.
 
-![Web Gui Preview](https://github.com/bmoesdijk/daikin-control/blob/master/web_gui-phone.png)
+![Web Gui Preview](https://github.com/bmoesdijk/daikin-control/blob/master/web_gui-phone.PNG)
+
 If you also want the web UI to be used as an app on your iPhone, do the following:
 Make sure that the file  apple-touch-icon.png is pressent in the media directory. (i.e.in web/DaikinControl/media/apple-touch-icon.png)
 Open the webUI from Safari on your iPhone.
