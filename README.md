@@ -34,7 +34,7 @@ edit the following section with the IP address(es) and names of your unit(s):<br
 	<!--																																																											  
 	<#######################################################################################################################-->
 
-When you have a single unit, only configure the IP address and name of the first unit. Set the IP addresses of the other 2 units to "nnn.nnn.nnn.nnn"  and the names to " Undefined" this will prevent the selection buttons on the top of the screen not to appear.
+When you have a single unit, only configure the IP address and name of the first unit. Set the IP addresses of the other 2 units to "nnn.nnn.nnn.nnn"  and the names to " Undefined" this will prevent the selection buttons on the top of the screen to appear.
 
 ![Web Gui Preview](https://github.com/bmoesdijk/daikin-control/blob/master/web_gui-phone.PNG)
 
