@@ -1,7 +1,7 @@
 Daikin-Control
 ==============
 
-![Web Gui Preview](https://raw.githubusercontent.com/ael-code/daikin-control/master/web_gui-new.png)
+![Web Gui Preview](https://github.com/bmoesdijk/daikin-control/blob/master/web_gui-new.png)
 
 The '''Daikin Emura FTXG-L''' air conditioner comes with a wifi module preinstalled that allows you to control it via internet. Other Daikin airconditioners can be upgraded with a wifi module WDA00001.
 The solution provided by Daikin is a mobile app (very well designed) that allows you to control the air conditioner(s) even remotely, exploiting the REST API of the wifi module.
@@ -16,7 +16,6 @@ Even if though this system works well, there are some problems:
 To configure your unit in the web UI:
 Open the file: index.html
 edit the following section with the IP address(es) and names of your unit(s):
-<body>
 	<!--#######################################################################################################################>
 	<!--CONFIGURATION SECTION                                                                                                                                                                                               >
 	<!--Configure the IP address(es) of your Daikin wifi controler(s) here. Max 3 units. If only 1 unit, configure only the first item for IP-address and Name       >
@@ -35,6 +34,7 @@ edit the following section with the IP address(es) and names of your unit(s):
 	<#######################################################################################################################-->
 When you have a single unit, only configure the IP address and name of the first unit. Set the IP addresses of the other 2 units to "nnn.nnn.nnn.nnn"  and the names to " Undefined" this will prevent the selection buttons on the top of the screen not to appear.
 
+![Web Gui Preview](https://github.com/bmoesdijk/daikin-control/blob/master/web_gui-phone.png)
 If you also want the web UI to be used as an app on your iPhone, do the following:
 Make sure that the file  apple-touch-icon.png is pressent in the media directory. (i.e.in web/DaikinControl/media/apple-touch-icon.png)
 Open the webUI from Safari on your iPhone.
