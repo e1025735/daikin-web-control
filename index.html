@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>AC Control</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<link rel="apple-touch-icon" href="media/apple-touch-icon.png">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="shortcut icon" type="image/x-icon" href="../daikinControl/media/favicon.ico">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="../daikinControl/AC_Control.css" media="screen"/>
+
+	<!-- Font Awsome for our button icons-->
+	<link href="../daikinControl/fontawesome-free-6.0.0-beta3-web/css/all.css" style="text-color: rgb(191,191,191)" rel="stylesheet">
+
+	<!-- Bootstrap -->
+	<link href="../daikinControl/bootstrap/css/bootstrap.css" rel="stylesheet">
+	
+</head>
+<body>
+	<!--#######################################################################################################################>
+	<!--CONFIGURATION SECTION                                                                                                                                                                                               >
+	<!--Configure the IP address(es) of your Daikin wifi controler(s) here. Max 3 units. If only 1 unit, configure only the first item for IP-address and Name       >
+	<!--                                                                                                                                                                                                                                            -->
+	<div class="unit-ips">
+	<div class="unit-ip" id="unit-ip-1" data-unit-ip="192.168.178.17"> </div>
+	<div class="unit-ip" id="unit-ip-2" data-unit-ip="192.168.178.18"> </div> <!--When set to "nnn.nnn.nnn.nnn" only the first item is used-->
+	<div class="unit-ip" id="unit-ip-3" data-unit-ip="192.168.178.19"> </div>
+	</div>
+	<div class="unit-names">
+	<div class="unit-name" id="unit-name-1" data-unit-name="Kantoor"> </div>
+	<div class="unit-name" id="unit-name-2" data-unit-name="Praktijk"> </div>
+	<div class="unit-name" id="unit-name-3" data-unit-name="Slaapkamer"> </div>
+	</div>
+	<!--																																																											   >
+	<#######################################################################################################################-->
+<div class='main-container' >
+	 <a class="logo"><img src="../daikinControl/media/Daikin-Logo-long.png" width="340px" style="margin:auto"/> </a>
+	
+		<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+		  <div class="container-fluid">
+			<div class="navbar-brand" id="navbar-brand">
+				<p> AC Control  <var id="unitname"></var> </p>
+			</div>
+			<p class="navbar-text navbar-right sr-only" id="spinner" ><i class="fa fa-refresh fa-spin fa-3x fa-fw"></i></p>
+		  </div>
+		</nav>
+		
+		<div  class="alert alert-danger sr-only" id="alert">
+			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+			<p></p>
+		</div>
+		
+		<div class="container">
+			<div class="row" id="unit-row">
+	   		<div class="col-md-4 col-sm-6">
+	   			<!--Unit Selection -->
+					<h4>Unit Selection</h4>
+					<div class="btn-group">
+						<a class="btn btn-default unit-btn" name="Kantoor" id="1" onclick='unit_onclick("1");'><i class="fas fa-briefcase fa-2x"></i></i></a>
+						<a class="btn btn-default unit-btn" name="Praktijk" id="2" 	onclick='unit_onclick("2");'><i class="fas fa-stethoscope fa-2x"></i></a>
+						<a class="btn btn-default unit-btn" name="Slaapkamer" id="3" onclick='unit_onclick("3");'><i class="fas fa-bed fa-2x"></i></a>
+					</div>	
+		  	</div>
+			</div>
+			<div class="row" >
+				<!-- ON/OFF -->
+		  		<div class="power-container">
+		  		<h4>Power</h4>
+		  			<a class="btn btn-default" id="powerBtn" onclick='power_onclick();'>
+		  				<i class="fa fa-power-off" id="powerIcn" style="font-size:1.6em;color:red;"></i><b style="font-size:1.5em;" id="power"> OFF</b>
+		  			</a>
+		  		</div>
+		  		<div class="temp-container">
+		  			<!-- TEMPERATURES -->
+					<h4>Temperature</h4> 
+					<div class="btn-group" id="tempBtn" onclick='resetTemp_onclick();'>
+						<a class="btn btn-default" style="font-size:1.5em; color: rgb(234,247,235); background-color: rgb(50,100,380)">
+							<i class="fa fa-home"></i><b id="home_temp"> - C</b>
+						</a>
+					</div>
+					<div class="btn-group" >
+						<a class="btn btn-default" style="font-size:1.5em; color: rgb(234,247,235); background-color: rgb(50,100,380)">
+							<i class="fa fa-image"></i><b id="outside_temp"> - C</b>
+						</a>
+					</div>		
+		  	</div>
+	  		
+	  		</div>
+			<br>
+			<div class="row">
+	   			<div class="container">
+	   			<!-- Mode -->
+					<h4>Operation</h4>
+					<div class="btn-group">
+						<a class="btn btn-default mode-btn" id="mode_cooling" onclick='mode_onclick("3");'><i class="fa-solid fa-snowflake fa-2x"></i></a>
+						<a class="btn btn-default mode-btn" id="mode_dehum"  onclick='mode_onclick("2");'><i class="fa fa-droplet fa-2x"></i></a>
+						<a class="btn btn-default mode-btn" id="mode_heating" onclick='mode_onclick("4");'><i class="fa-solid fa-sun fa-2x"></i></a>
+						<a class="btn btn-default mode-btn" id="mode_fan" 		 onclick='mode_onclick("6");'><i class="fa-solid fa-fan fa-2x"></i></a>
+						<a class="btn btn-default mode-btn" id="mode_auto" 	 onclick='mode_onclick("1");'><i class="fa fa-font fa-2x"></i></a>
+					</div>		
+		  		</div>
+		  		<div class="container">	
+		  			<!-- Fan -->
+					<h4>Fan</h4>
+					<div class="btn-group">
+						<a class="btn btn-default fan-btn" id="fan_auto" onclick='fan_onclick("A");'><i class="fa fa-font fa-2x"></i></a>
+						<a class="btn btn-default fan-btn" id="fan_eco" 	onclick='fan_onclick("B");'><i class="fa fa-leaf fa-2x"></i></a>
+						<a class="btn btn-default" onclick='fan_onclick("3");'><img src="../daikinControl/media/level_1_off.svg" height="29px" id="fan_lvl_1"></a>
+						<a class="btn btn-default" onclick='fan_onclick("4");'><img src="../daikinControl/media/level_2_off.svg" height="29px" id="fan_lvl_2"></a>
+						<a class="btn btn-default" onclick='fan_onclick("5");'><img src="../daikinControl/media/level_3_off.svg" height="29px" id="fan_lvl_3"></a>
+						<a class="btn btn-default" onclick='fan_onclick("6");'><img src="../daikinControl/media/level_4_off.svg" height="29px" id="fan_lvl_4"></a>
+						<a class="btn btn-default" onclick='fan_onclick("7");'><img src="../daikinControl/media/level_5_off.svg" height="29px" id="fan_lvl_5"></a>
+					</div>
+		  		</div>
+		  		<div class="container">	
+		  			<!-- Wings Direction -->
+					<h4>Direction</h4>
+					<div class="btn-group" >
+						<a class="btn btn-default wing-btn" id="wing_v" onclick='wing_onclick("1");'><i class="fa fa-arrows-v fa-2x"></i></a>
+						<a class="btn btn-default wing-btn" id="wing_h" onclick='wing_onclick("2");'><i class="fa fa-arrows-h fa-2x"></i></a>
+						<a class="btn btn-default wing-btn"	id="wing_b" onclick='wing_onclick("3");'><i class="fa fa-arrows fa-2x"></i></a>
+						<a class="btn btn-default wing-btn"	id="wing_s" onclick='wing_onclick("0");'><i class="fa fa-stop fa-2x"></i></a>
+					</div>	
+				</div>
+		  	</div>
+		  	<div class="row">
+		  		<div class="container" id="target_temp_col">
+		  			
+		  			<!--Target temperature-->
+					<h4><i class="fa fa-temperature-high"></i> Target </h4>
+					<div class="btn-group" >
+						<a class="btn btn-default" style="font-size:2.2em;padding-top:12px;padding-bottom:12px;color: rgb(234,247,235); background-color: rgb(50,100,380)"><b id="target_temp"> ~ C</b></a>
+					</div>
+					
+					<div class="btn-group-vertical">
+						<a class="btn btn-default wing-btn" id="target_temp_up" onclick='temp_onclick(1);' style="font-size:1.7em;padding-top:0px;padding-bottom:0px;"><i class="fa fa-chevron-up"></i></a>
+						<a class="btn btn-default wing-btn"	id="target_temp_down" onclick='temp_onclick(-1);' style="font-size:1.7em;padding-top:0px;padding-bottom:0px;"><i class="fa fa-chevron-down"></i></a>
+					</div>
+						<br>
+						<br>
+						<br>
+		  		</div>
+	  		</div>
+		</div>
+	</div>
+<!--script type="text/javascript" id="unit" data-multi-unit="false" data-unit="1" src="../daikinControl_new/daikin_ui.js">//For a single unit</script-->
+<script type="text/javascript" src="../daikinControl/daikin_ui.js">//For multiple units. Configure units on top</script>
+</body>
+</html>
