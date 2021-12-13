@@ -8,7 +8,7 @@ The solution provided by Daikin is a mobile app (very well designed) that allows
 
 Even though this system works well, there are some problems:
 
-- It is no possible to control the AC from a web browser. You must use the official mobile application. If your device is not supported or you are working from a computer you cannot control your air conditioner via your PC.
+- It is not possible to control the AC from a web browser. You must use the official mobile application. If your device is not supported or you are working from a computer you cannot control your air conditioner via your PC.
 - To control your AC remotely from outside your lan, your requests must go through the Daikin server. The device response is slow because the system is based on polling request. (you can't set the ip of the AC on the mobile application)
 - When you have multiple units that you want to control the official app is very slow.
 
