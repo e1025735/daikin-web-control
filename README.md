@@ -14,32 +14,24 @@ Even though this system works well, there are some problems:
 
 <br>
 To configure your unit in the web UI:<br>
-Open the file: index.html<br>
-edit the following section with the IP address(es) and names of your unit(s):<br>
+Open the file: config.js<br>
+Adapt the units params for the IP address(es), names and icons of your unit(s). Here is an example for two units:<br>
 
-	<!--#######################################################################################################################>
-	<!--CONFIGURATION SECTION                                                                                                                                                                                               >
-	<!--Configure the IP address(es) of your Daikin wifi controler(s) here. Max 3 units. If only 1 unit, configure only the first item for IP-address and Name       >
-	<!--                                                                                                                                                                                                                                            --> /*
-	<div class="unit-ips">
-	<div class="unit-ip" id="unit-ip-1" data-unit-ip="192.168.178.17"> </div>
-	<div class="unit-ip" id="unit-ip-2" data-unit-ip="192.168.178.18"> </div> <!--When set to "nnn.nnn.nnn.nnn" only the first item is used-->
-	<div class="unit-ip" id="unit-ip-3" data-unit-ip="192.168.178.19"> </div>
-	</div>
-	<div class="unit-names">
-	<div class="unit-name" id="unit-name-1" data-unit-name="Kantoor"> </div>
-	<div class="unit-name" id="unit-name-2" data-unit-name="Praktijk"> </div>
-	<div class="unit-name" id="unit-name-3" data-unit-name="Slaapkamer"> </div>
-	</div>*/
-	<!--																																																											  
-	<#######################################################################################################################-->
+	const config = {
+        refreshInterval: 2000,
+        units: [
+            {ip: "192.168.1.10", name: "Living room", icon: "fa-couch"},
+            {ip: "192.168.1.11", name: "Bed room", icon: "fa-bed"},
+            {ip: "unit3IP", name: "unit3Name", icon: "fa-3"}
+        ]
+    };
 
-When you have a single unit, only configure the IP address and name of the first unit. Set the IP addresses of the other 2 units to "nnn.nnn.nnn.nnn"  and the names to " Undefined" this will prevent the selection buttons on the top of the screen to appear.
+When you have a single unit, only configure the IP address of the first unit. Leave the IP addresses of the other 2 units to the default ("unit2IP" and "unit3IP") since this will prevent the selection buttons on the top of the screen to appear.
 
 ![Web Gui Preview](https://github.com/bmoesdijk/daikin-control/blob/master/web_gui-phone.PNG)
 
 If you also want the web UI to be used as an app on your iPhone, do the following:<br>
-Make sure that the file  apple-touch-icon.png is pressent in the media directory. (i.e.in web/DaikinControl/media/apple-touch-icon.png)<br>
+Make sure that the file  apple-touch-icon.png is pressent in the media directory. (i.e.in web/daikin-control-UI-updated/media/apple-touch-icon.png)<br>
 Open the webUI from Safari on your iPhone <br>
 From the menu options select "add to home screen" <br>
 An icon should appear with the Daikin logo contained in apple-touch-icon.png on your home screen <br>
@@ -57,7 +49,7 @@ The API described by this document have been tested and seems to be working with
 
 The following hardware configurations have been used for testing:
 
-...
+```
 ModelName:          Daikin Perfera FTXM20M
 ModelID:                FTXM20M2JV1B
 WifiControllerID:    BRP069B41 3P472899-1
@@ -270,3 +262,8 @@ Hot 25c ( AIR silence )
 ```
 ret=OK,pow=1,mode=4,adv=,stemp=25.0,shum=0,dt1=25.0,dt2=M,dt3=22.0,dt4=25.0,dt5=25.0,dt7=25.0,dh1=0,dh2=50,dh3=0,dh4=0,dh5=0,dh7=0,dhh=50,b_mode=4,b_stemp=25.0,b_shum=0,alert=255,f_rate=B,f_dir=0,b_f_rate=B,b_f_dir=0,dfr1=B,dfr2=B,dfr3=B,dfr4=B,dfr5=B,dfr6=B,dfr7=B,dfrh=5,dfd1=0,dfd2=0,dfd3=0,dfd4=0,dfd5=0,dfd6=0,dfd7=0,dfdh=0
 ```
+
+## Honorable Mentions
+* Boudewijn van de Moesdijk
+* Erik Hjortberg
+* ael-code
