@@ -1,0 +1,17 @@
+name: Trigger Docker builder
+
+on:
+  push:
+    branches:
+      - master 
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send repository_dispatch to docker-daikin-web-control
+        run: |
+          curl -X POST https://api.github.com/repos/e1025735/docker-daikin-web-control/dispatches \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: token ${{ secrets.REPO_DOCKER_TOKEN }}" \
+            -d '{"event_type":"trigger-build"}'
