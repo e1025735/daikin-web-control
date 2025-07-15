@@ -1,28 +1,28 @@
-var request_control_loading = 0;
-var request_sensor_loading = 0;
-var timer; //in milliseconds
+let request_is_control_loading = false;
+let request_is_sensor_loading = false;
+let timer; //in milliseconds
 
-var control_response;
-var control_timeout;
-var sensor_response;
-var sensor_timeout;
-var degreesSymbol = '\xB0'; // °
+let last_control_response;
+let control_timeout;
+let last_sensor_response;
+let sensor_timeout;
+const degreesSymbol = '\xB0'; // °
 
 
 // These variables are used for dynamically injection of the config.js information
 // noinspection JSUnusedGlobalSymbols
-var unit1IP;
-var unit1Name;
+let unit1IP;
+let unit1Name;
 // noinspection JSUnusedGlobalSymbols
-var unit2IP;
+let unit2IP;
 // noinspection JSUnusedGlobalSymbols
-var unit2Name;
+let unit2Name;
 // noinspection JSUnusedGlobalSymbols
-var unit3IP;
+let unit3IP;
 // noinspection JSUnusedGlobalSymbols
-var unit3Name;
+let unit3Name;
 
-var activeUnitId = 1;
+let activeUnitId = 1;
 
 
 //---------SET UP FUNCTIONS------------
@@ -51,66 +51,67 @@ function init_unit(unit, unitId) {
 
 function hasConfigForUnit(unitId) {
     var configUnit = config.units[unitId-1];
-    return !!configUnit && configUnit.ip !== "unit"+unitId+"IP";
+    return !!configUnit && configUnit.ip !== "unit" + unitId + "IP";
 }
 
 function default_select_first_unit() {
-    document.getElementById("activeUnitName").innerHTML = unit1Name;
+    document.getElementById("activeUnitName").textContent = unit1Name;
     document.getElementById("1").className = "btn btn-info unit-btn";
 }
 default_select_first_unit();
 
 
 function request_control() {
-    var ip = getActiveUnit_IP();
-    var target = "./api.php";
-    var request = "GET";
-    var parameters = "uri=/aircon/get_control_info&unit_ip=" + ip;
-    var xmlhttp = new XMLHttpRequest();
+    const ip = getActiveUnit_IP();
+    const target = "./api.php";
+    const request = "GET";
+    const parameters = "uri=/aircon/get_control_info&unit_ip=" + ip;
+    let xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
+        //state 4 of a request means DONE
         if (xmlhttp.readyState === 4) {
-            request_control_loading = 0;
-            if ((!request_control_loading) && (!request_sensor_loading)) {
-                set_loading(1);
+            request_is_control_loading = false;
+            if ((!request_is_control_loading) && (!request_is_sensor_loading)) {
+                set_loading(true);
             }
             if (xmlhttp.status === 200) {
-                set_alert(0, "");
-                var response = JSON.parse(xmlhttp.responseText);
-                control_response = response;
-                control_response_handler(response);
+                set_alert(false, "");
+                const json_response = JSON.parse(xmlhttp.responseText);
+                last_control_response = json_response;
+                control_response_handler(json_response);
                 control_timeout = setTimeout(request_control, timer);
             } else {
-                console.log("Error: control ajax request failed");
-                set_alert(1, "<b>Error:</b> control ajax request failed");
+                const error_string = `Control ajax request to ${ip} failed`;
+                console.error(`Error: ${error_string}`);
+                set_alert(true, error_string);
             }
-        } else {
-            //alert(xmlhttp.readyState);
         }
     };
     xmlhttp.open(request, target + "?" + parameters, true);
     xmlhttp.send();
-    request_control_loading = 1;
+    request_is_control_loading = true;
     sleep(3000);
-    set_loading(0);
+    set_loading(false);
 }
 
 function send_control(opts) {
-    var ip = getActiveUnit_IP();
-    var target = "./api.php";
-    var request = "POST";
-    var parameters = "unit_ip=" + ip;
-    var xmlhttp = new XMLHttpRequest();
+    const ip = getActiveUnit_IP();
+    const target = "./api.php";
+    const request = "POST";
+    const parameters = "unit_ip=" + ip;
+    let xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
-        if (xmlhttp.readyState == 4) {
-            if (xmlhttp.status == 200) {
-                set_alert(0, "");
-                var response = JSON.parse(xmlhttp.responseText);
-                console.log(response);
+        //state 4 of a request means DONE
+        if (xmlhttp.readyState === 4) {
+            if (xmlhttp.status === 200) {
+                set_alert(false, "");
+                const response = JSON.parse(xmlhttp.responseText);
+                console.debug(response);
             } else {
-                console.log("Error: send control request failed");
+                const error_string = `Send control request to ${ip} failed`;
+                console.error(`Error: ${error_string}`);
+                set_alert(true, error_string);
             }
-        } else {
-            //alert(xmlhttp.readyState);
         }
     };
 
@@ -120,89 +121,87 @@ function send_control(opts) {
 }
 
 function request_sensor() {
-    var ip = getActiveUnit_IP();
-    var target = "./api.php";
-    var request = "GET";
-    var parameters = "uri=/aircon/get_sensor_info&unit_ip=" + ip;
-    var xmlhttp = new XMLHttpRequest();
+    const ip = getActiveUnit_IP();
+    const target = "./api.php";
+    const request = "GET";
+    const parameters = "uri=/aircon/get_sensor_info&unit_ip=" + ip;
+    let xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
-        if (xmlhttp.readyState == 4) {
-            //request_sensor_loading=0;
-            request_control_loading = 0;
-            if ((!request_control_loading) && (!request_sensor_loading)) {
-                set_loading(1);
+        //state 4 of a request means DONE
+        if (xmlhttp.readyState === 4) {
+            request_is_control_loading = false;
+            if ((!request_is_sensor_loading) && (!request_is_sensor_loading)) {
+                set_loading(true);
             }
-            if (xmlhttp.status == 200) {
-                set_alert(0, "");
-                var response = JSON.parse(xmlhttp.responseText);
-                sensor_response = response;
-                sensor_response_handler(response);
+            if (xmlhttp.status === 200) {
+                set_alert(false, "");
+                const json_response = JSON.parse(xmlhttp.responseText);
+                last_sensor_response = json_response;
+                sensor_response_handler(json_response);
                 sensor_timeout = setTimeout(request_sensor, timer);
             } else {
-                console.log("Error: sensor ajax request failed");
-                set_alert(1, "<b>Error:</b> sensor ajax request failed");
+                const error_string = `Send ajax request to ${ip} failed`;
+                console.error(`Error: ${error_string}`);
+                set_alert(true, error_string);
             }
-        } else {
-            //alert(xmlhttp.readyState);
         }
     };
     xmlhttp.open(request, target + "?" + parameters, true);
-    //xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
     xmlhttp.send();
-    request_sensor_loading = 1;
+    request_is_sensor_loading = true;
     sleep(3000);
-    set_loading(0);
+    set_loading(false);
 }
 
-function control_response_handler(response) {
+function control_response_handler(json_response) {
     reset_wing();
     reset_fan();
     reset_mode();
 
-    var target_temp = parseFloat(response.stemp).toFixed(1);
+    const target_temp = parseFloat(json_response.stemp).toFixed(1);
 
-    if (response.mode === "0" || response.mode === "1") {
+    if (json_response.mode === "0" || json_response.mode === "1") {
         if (target_temp <= 18) {
-            set_target_temp_arrow(1, true);
-            set_target_temp_arrow(-1, false);
+            set_target_temp_arrow(true, true);
+            set_target_temp_arrow(false, false);
         } else if (target_temp >= 31) {
-            set_target_temp_arrow(1, false);
-            set_target_temp_arrow(-1, true);
+            set_target_temp_arrow(true, false);
+            set_target_temp_arrow(false, true);
         } else {
-            set_target_temp_arrow(1, true);
-            set_target_temp_arrow(-1, true);
+            set_target_temp_arrow(true, true);
+            set_target_temp_arrow(false, true);
         }
-    } else if (response.mode === "3") {
+    } else if (json_response.mode === "3") {
         if (target_temp <= 18) {
-            set_target_temp_arrow(1, true);
-            set_target_temp_arrow(-1, false);
+            set_target_temp_arrow(true, true);
+            set_target_temp_arrow(false, false);
         } else if (target_temp >= 33) {
-            set_target_temp_arrow(1, false);
-            set_target_temp_arrow(-1, true);
+            set_target_temp_arrow(true, false);
+            set_target_temp_arrow(false, true);
         } else {
-            set_target_temp_arrow(1, true);
-            set_target_temp_arrow(-1, true);
+            set_target_temp_arrow(true, true);
+            set_target_temp_arrow(false, true);
         }
-    } else if (response.mode === "4") {
+    } else if (json_response.mode === "4") {
         if (target_temp <= 10) {
-            set_target_temp_arrow(1, true);
-            set_target_temp_arrow(-1, false);
+            set_target_temp_arrow(true, true);
+            set_target_temp_arrow(false, false);
         } else if (target_temp >= 31) {
-            set_target_temp_arrow(1, false);
-            set_target_temp_arrow(-1, true);
+            set_target_temp_arrow(true, false);
+            set_target_temp_arrow(false, true);
         } else {
-            set_target_temp_arrow(1, true);
-            set_target_temp_arrow(-1, true);
+            set_target_temp_arrow(true, true);
+            set_target_temp_arrow(false, true);
         }
     } else {
-        set_target_temp_arrow(1, true);
-        set_target_temp_arrow(-1, true);
+        set_target_temp_arrow(true, true);
+        set_target_temp_arrow(false, true);
     }
 
     set_target_temp(target_temp);
-    set_power(parseInt(response.pow));
-    set_mode(parseInt(response.mode));
-    var f_mode = response.f_rate;
+    set_power(Boolean(parseInt(json_response.pow)));
+    set_mode(parseInt(json_response.mode));
+    let f_mode = json_response.f_rate;
     if (f_mode === "A") {
         f_mode = 1;
     } else if (f_mode === "B") {
@@ -211,24 +210,24 @@ function control_response_handler(response) {
         f_mode = parseInt(f_mode);
     }
     set_fan(f_mode);
-    set_wing(parseInt(response.f_dir));
+    set_wing(parseInt(json_response.f_dir));
 }
 
-function sensor_response_handler(response) {
-    set_home_temp(parseInt(response.htemp));
-    set_outside_temp(parseInt(response.otemp));
+function sensor_response_handler(json_response) {
+    set_home_temp(parseInt(json_response.htemp));
+    set_outside_temp(parseInt(json_response.otemp));
 }
 
 function minimize_opt(opt) {
-    var min_opt = {};
-    for (var x in opt) {
-        if (x == "unit" ||
-            x == "pow" ||
-            x == "mode" ||
-            x == "stemp" ||
-            x == "shum" ||
-            x == "f_rate" ||
-            x == "f_dir"
+    let min_opt = {};
+    for (const x in opt) {
+        if (x === "unit" ||
+            x === "pow" ||
+            x === "mode" ||
+            x === "stemp" ||
+            x === "shum" ||
+            x === "f_rate" ||
+            x === "f_dir"
         ) {
             min_opt[x] = opt[x];
         }
@@ -239,72 +238,72 @@ function minimize_opt(opt) {
 
 //----------ON CLICK FUNCTIONS------------
 
-function mode_onclick(num) {
-    if (!control_response) return;
-    var temp = minimize_opt(control_response);
-    temp["unit"] = control_response["dfu" + num];
-    temp["mode"] = num;
-    temp["f_rate"] = control_response["dfr" + num];
-    temp["f_dir"] = control_response["dfd" + num];
-    temp["shum"] = "0";
-    if (num == "6") {
-        temp["stemp"] = "0";
+function mode_onclick(str_mode) {
+    if (!last_control_response) return;
+    let options = minimize_opt(last_control_response);
+    options["unit"] = last_control_response["dfu" + str_mode];
+    options["mode"] = str_mode;
+    options["f_rate"] = last_control_response["dfr" + str_mode];
+    options["f_dir"] = last_control_response["dfd" + str_mode];
+    options["shum"] = "0";
+    if (str_mode === "6") {
+        options["stemp"] = "0";
     } else {
-        temp["stemp"] = control_response["dt" + num];
+        options["stemp"] = last_control_response["dt" + str_mode];
     }
-    send_control(temp);
+    send_control(options);
     update();
 }
 
-function unit_onclick(unit) {
-    var temp = minimize_opt(control_response);
-    set_unit(unit);
+function unit_onclick(str_unit_select) {
+    let options = minimize_opt(last_control_response);
+    set_unit(str_unit_select);
     request_control();
     resetTemp_onclick()
 }
 
 function power_onclick() {
-    if (!control_response) return;
-    var temp = minimize_opt(control_response);
-    temp.pow = ((temp.pow == "0") ? 1 : 0);
-    send_control(temp);
+    if (!last_control_response) return;
+    const options = minimize_opt(last_control_response);
+    options.pow = ((options.pow === "0") ? 1 : 0);
+    send_control(options);
     update();
 }
 
-function fan_onclick(level) {
-    if (!control_response) return;
-    var temp = minimize_opt(control_response);
-    temp.f_rate = level;
-    send_control(temp);
+function fan_onclick(num_fan_level) {
+    if (!last_control_response) return;
+    const options = minimize_opt(last_control_response);
+    options.f_rate = num_fan_level;
+    send_control(options);
     update();
 }
 
-function wing_onclick(num) {
-    if (!control_response) return;
-    var temp = minimize_opt(control_response);
-    if (num == control_response.f_dir) {
-        temp.f_dir = 0;
+function wing_onclick(num_wing_mode) {
+    if (!last_control_response) return;
+    const options = minimize_opt(last_control_response);
+    if (num_wing_mode === last_control_response.f_dir) {
+        options.f_dir = 0;
     } else {
-        temp.f_dir = num;
+        options.f_dir = num_wing_mode;
     }
-    send_control(temp);
+    send_control(options);
     update();
 }
 
-function temp_onclick(inc) {
-    if (!control_response) return;
-    var temp = minimize_opt(control_response);
-    temp.stemp = (parseFloat(control_response.stemp) + inc).toString();
-    send_control(temp);
+function temp_onclick(float_increase_value) {
+    if (!last_control_response) return;
+    const options = minimize_opt(last_control_response);
+    options.stemp = (parseFloat(last_control_response.stemp) + float_increase_value).toString();
+    send_control(options);
     update();
 }
 
 
 //---------GUI SET FUNCTIONS------------
 
-function set_unit(unitId) {
-    activeUnitId = unitId;
-    switch (unitId) {
+function set_unit(str_unitId) {
+    activeUnitId = str_unitId;
+    switch (str_unitId) {
         case "1":
             document.getElementById("1").className = "btn btn-info unit-btn";
             document.getElementById("2").className = "btn btn-default unit-btn";
@@ -321,35 +320,31 @@ function set_unit(unitId) {
             document.getElementById("2").className = "btn btn-default unit-btn";
             break;
     }
-    document.getElementById("activeUnitName").innerHTML = window["unit" + unitId + "Name"];
+    document.getElementById("activeUnitName").textContent = window["unit" + str_unitId + "Name"];
 }
 
-function set_power(boolean) {
-    power = document.getElementById("power");
-    powerIcn = document.getElementById("powerIcn");
-    if (boolean) {
-        power.innerHTML = " ON";
+function set_power(bool_is_on) {
+    const power = document.getElementById("power");
+    const powerIcn = document.getElementById("powerIcn");
+    const powerBtn = document.getElementById("powerBtn");
+
+    power.textContent = bool_is_on ? " ON" : " OFF";
+
+    if (bool_is_on) {
+        powerBtn.classList.remove("btn-default");
+        powerBtn.classList.add("btn-info");
+        powerIcn.style.fontSize = "1.6em";
+        powerIcn.style.color = "green";
     } else {
-        power.innerHTML = " OFF";
-    }
-    switch (boolean) {
-        case 0:
-            var elem = document.getElementById("powerBtn");
-            elem.classList.remove("btn-info");
-            elem.classList.add("btn-default");
-            powerIcn.style = "font-size:1.6em;color:red";
-            break;
-        case 1:
-            var elem = document.getElementById("powerBtn");
-            elem.classList.remove("btn-default");
-            elem.classList.add("btn-info");
-            powerIcn.style = "font-size:1.6em;color:green";
-            break;
+        powerBtn.classList.remove("btn-info");
+        powerBtn.classList.add("btn-default");
+        powerIcn.style.fontSize = "1.6em";
+        powerIcn.style.color = "red";
     }
 }
 
 function resetTemp_onclick() {
-    request_sensor_loading = 0;
+    request_is_sensor_loading = false;
     update();
 }
 
@@ -360,77 +355,91 @@ function reset_mode() {
     }
 }
 
-function set_mode(mode) {
-    if (mode === 1 || mode === 7) mode = 0;
-    //0-1-7 auto
-    //2 dehum
-    //3 cooling
-    //4 heating
-    //6 fan
-    switch (mode) {
-        case 0:
-            document.getElementById("mode_auto").className = "btn btn-info mode-btn";
-            break;
-        case 2:
-            document.getElementById("mode_dehum").className = "btn btn-info mode-btn";
-            break;
-        case 3:
-            document.getElementById("mode_cooling").className = "btn btn-info mode-btn";
-            break;
-        case 4:
-            document.getElementById("mode_heating").className = "btn btn-info mode-btn";
-            break;
-        case 6:
-            document.getElementById("mode_fan").className = "btn btn-info mode-btn";
-            break;
-        default:
-            console.log("set_mode() switch: default case reached");
-    }
-}
+/**
+ * Sets the active mode button based on the given numeric mode
+ *
+ * Allowed mode values and their meaning:
+ * - 0: Auto
+ * - 1, 7: Normalize to Auto
+ * - 2: Dehumidify
+ * - 3: Cooling
+ * - 4: Heating
+ * - 6: Fan
+ *
+ * The function highlights the selected mode button
+ *
+ * @param {number} num_mode - The numeric mode identifier.
+ */
+function set_mode(num_mode) {
+    // Normalize mode: 1 and 7 map to auto (0)
+    if (num_mode === 1 || num_mode === 7) num_mode = 0;
 
-function set_home_temp(temp) {
-    document.getElementById("home_temp").innerHTML = " " + temp + degreesSymbol + "C";
-}
+    const map_num_to_mode = {
+        0: "mode_auto",
+        2: "mode_dehum",
+        3: "mode_cooling",
+        4: "mode_heating",
+        6: "mode_fan"
+    };
 
-function set_outside_temp(temp) {
-    document.getElementById("outside_temp").innerHTML = " " + temp + degreesSymbol + "C";
-}
-
-function set_target_temp(temp) {
-    if (isNaN(temp)) {
-        show_target_temp(0);
-        document.getElementById("target_temp").innerHTML = " ~ ";
+    // Highlight the corresponding mode button
+    const element_id = map_num_to_mode[num_mode];
+    if (element_id) {
+        const button_element = document.getElementById(element_id);
+        button_element.className = "btn btn-info mode-btn";
     } else {
-        document.getElementById("target_temp").innerHTML = " " + temp + degreesSymbol + "C";
-        //document.getElementById("target_temp").style="background-color:white";
-        show_target_temp(1);
+        console.warn(`set_mode() switch: default case reached. num_mode was ${num_mode}`);
     }
 }
 
-function show_target_temp(boolean) {
+
+function set_home_temp(num_temp) {
+    document.getElementById("home_temp").textContent = " " + num_temp + degreesSymbol + "C";
+}
+
+function set_outside_temp(num_temp) {
+    document.getElementById("outside_temp").textContent = " " + num_temp + degreesSymbol + "C";
+}
+
+function set_target_temp(num_temp) {
+    if (isNaN(num_temp)) {
+        show_target_temp(false);
+        document.getElementById("target_temp").textContent = " ~ ";
+    } else {
+        document.getElementById("target_temp").textContent = " " + num_temp + degreesSymbol + "C";
+        show_target_temp(true);
+    }
+}
+
+function show_target_temp(bool_show_temp) {
     var tt_col = document.getElementById("target_temp_col");
-    if (boolean) {
+
+    if (bool_show_temp) {
         tt_col.classList.remove("sr-only");
     } else {
         tt_col.classList.add("sr-only");
     }
 }
 
-function set_target_temp_arrow(inc, boolean) {
-    var arrow_id;
-    if (inc == 1) arrow_id = "target_temp_up";
-    else if (inc == -1) arrow_id = "target_temp_down";
-    else console.log("arrow inc not recognized");
+/**
+ * Enables or disables the target temperature arrow.
+ *
+ * @param {boolean} bool_is_arrow_up - If true, targets the "up" arrow, else targets the "down" arrow.
+ * @param {boolean} bool_is_enabled - If true, enables the arrow, else it disables it.
+ */
+function set_target_temp_arrow(bool_is_arrow_up, bool_is_enabled) {
+    const arrow_id = bool_is_arrow_up ? "target_temp_up" : "target_temp_down";
+    const arrow_element = document.getElementById(arrow_id);
 
-    var arrow_node = document.getElementById(arrow_id);
-
-    if (boolean) arrow_node.classList.remove("disabled");
-    else arrow_node.classList.add("disabled");
-
+    if (bool_is_enabled) {
+        arrow_element.classList.remove("disabled");
+    } else {
+        arrow_element.classList.add("disabled");
+    }
 }
 
-function set_fan(f_mode) {
-    switch (f_mode) {
+function set_fan(num_fan_mode) {
+    switch (num_fan_mode) {
         case 1:
             document.getElementById("fan_auto").className = "btn btn-info fan-btn";
             break;
@@ -438,33 +447,33 @@ function set_fan(f_mode) {
             document.getElementById("fan_eco").className = "btn btn-info fan-btn";
             break;
         case 3:
-            set_fan_img(1);
+            set_fan_level_img(1);
             break;
         case 4:
-            set_fan_img(2);
+            set_fan_level_img(2);
             break;
         case 5:
-            set_fan_img(3);
+            set_fan_level_img(3);
             break;
         case 6:
-            set_fan_img(4);
+            set_fan_level_img(4);
             break;
         case 7:
-            set_fan_img(5);
+            set_fan_level_img(5);
             break;
         default:
-            console.log("set_fan() switch: default case reached");
+            console.warn(`set_fan() switch: default case reached. num_fan_mode was ${num_fan_mode}`);
     }
 }
 
-function set_fan_img(num) {
-    var temp;
+function set_fan_level_img(num_fan_level) {
+    var fan;
     for (var i = 1; i < 6; ++i) {
-        temp = document.getElementById("fan_lvl_" + i.toString());
-        if (i <= num) {
-            temp.src = "media/level_" + i.toString() + "_on.svg";
+        fan = document.getElementById("fan_lvl_" + i.toString());
+        if (i <= num_fan_level) {
+            fan.src = "media/level_" + i.toString() + "_on.svg";
         } else {
-            temp.src = "media/level_" + i.toString() + "_off.svg";
+            fan.src = "media/level_" + i.toString() + "_off.svg";
         }
     }
 }
@@ -475,7 +484,7 @@ function reset_fan() {
         fan_list[i].classList.remove("btn-info");
         fan_list[i].classList.add("btn-default");
     }
-    set_fan_img(0);
+    set_fan_level_img(0);
 }
 
 function reset_wing() {
@@ -486,41 +495,41 @@ function reset_wing() {
     }
 }
 
-function set_wing(wing_mode) {
-    switch (wing_mode) {
+function set_wing(num_wing_mode) {
+    let elem = null;
+    switch (num_wing_mode) {
         case 0:
-            //reset_wing();
-            var elem = document.getElementById("wing_s");
+            elem = document.getElementById("wing_s");
             elem.classList.remove("btn-default");
             elem.classList.add("btn-info");
             break;
         case 1:
-            var elem = document.getElementById("wing_v");
+            elem = document.getElementById("wing_v");
             elem.classList.remove("btn-default");
             elem.classList.add("btn-info");
             break;
         case 2:
-            var elem = document.getElementById("wing_h");
+            elem = document.getElementById("wing_h");
             elem.classList.remove("btn-default");
             elem.classList.add("btn-info");
             break;
         case 3:
-            var elem = document.getElementById("wing_b");
+            elem = document.getElementById("wing_b");
             elem.classList.remove("btn-default");
             elem.classList.add("btn-info");
             break;
         default:
-            console.log("set_wing() switch: default case reached");
+            console.warn(`set_wing() switch: default case reached. num_wing_mode was ${num_wing_mode}`);
     }
 }
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+function sleep(num_ms) {
+    return new Promise(resolve => setTimeout(resolve, num_ms));
 }
 
-function set_loading(boolean) {
+function set_loading(bool_is_loading) {
     var spinner = document.getElementById("spinner");
-    if (boolean) {
+    if (bool_is_loading) {
         spinner.classList.remove("sr-only");
         spinner.className = "navbar-text navbar-right";
         sleep(3000);
@@ -530,16 +539,15 @@ function set_loading(boolean) {
     }
 }
 
-function set_alert(boolean, mex) {
-    var myAlert = document.getElementById("alert");
-    if (boolean) {
-        myAlert.classList.remove("sr-only");
-        myAlert.className = "alert alert-danger";
-        myAlert.lastElementChild.innerHTML = mex;
+function set_alert(bool_has_alert, str_message) {
+    let alert_element = document.getElementById("alert");
+    if (bool_has_alert) {
+        alert_element.classList.remove("sr-only");
+        alert_element.className = "alert alert-danger";
+        alert_element.lastElementChild.innerHTML = `<b>Error:</b> ${str_message}`;
     } else {
-        myAlert.className = "alert alert-danger sr-only";
-        myAlert.classList.add("sr-only");
-
+        alert_element.className = "alert alert-danger sr-only";
+        alert_element.classList.add("sr-only");
     }
 }
 
@@ -550,9 +558,9 @@ function getActiveUnit_IP() {
 function update() {
     clearTimeout(control_timeout);
     clearTimeout(sensor_timeout);
-    if (!request_control_loading)
+    if (!request_is_control_loading)
         request_control();
-    if (!request_sensor_loading)
+    if (!request_is_sensor_loading)
         request_sensor();
 }
 
