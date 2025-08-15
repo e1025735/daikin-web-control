@@ -10,41 +10,42 @@ const degreesSymbol = '\xB0'; // °
 
 
 // These variables are used for dynamically injection of the config.js information
-// noinspection JSUnusedGlobalSymbols
-let unit1IP;
-let unit1Name;
-// noinspection JSUnusedGlobalSymbols
-let unit2IP;
-// noinspection JSUnusedGlobalSymbols
-let unit2Name;
-// noinspection JSUnusedGlobalSymbols
-let unit3IP;
-// noinspection JSUnusedGlobalSymbols
-let unit3Name;
+const vars = {
+    unit1IP: null,
+    unit1Name: null,
+    unit2IP: null,
+    unit2Name: null,
+    unit3IP: null,
+    unit3Name: null
+};
 
 let activeUnitId = 1;
 
 
 //---------SET UP FUNCTIONS------------
 // Setup from the config.js properties
-timer = config.refreshInterval;
-init_unit(config.units[0], 1);
-// if there is only one unit do not display the selection for the units
-if (!hasConfigForUnit(2)) {
-    document.getElementById("unit-row").style = "display: none;";
-} else {
-    init_unit(config.units[1], 2);
-    // if there are only two unis do not display the third option
-    if (!hasConfigForUnit(3)) {
-        document.getElementById("3").style = "display: none;";
+function set_up(){
+    timer = config.refreshInterval;
+    init_unit(config.units[0], 1);
+    // if there is only one unit do not display the selection for the units
+    if (!hasConfigForUnit(2)) {
+        document.getElementById("unit-row").style = "display: none;";
     } else {
-        init_unit(config.units[2], 3);
+        init_unit(config.units[1], 2);
+        // if there are only two unis do not display the third option
+        if (!hasConfigForUnit(3)) {
+            document.getElementById("3").style = "display: none;";
+        } else {
+            init_unit(config.units[2], 3);
+        }
     }
+    default_select_first_unit();
 }
+set_up();
 
 function init_unit(unit, unitId) {
-    window["unit" + unitId + "IP"] = unit.ip;
-    window["unit" + unitId + "Name"] = unit.name;
+    vars["unit" + unitId + "IP"] = unit.ip;
+    vars["unit" + unitId + "Name"] = unit.name;
     document.getElementById(unitId)["name"] = unit.name;
     document.getElementById(unitId + "Icon").className += unit.icon;
 }
@@ -55,10 +56,9 @@ function hasConfigForUnit(unitId) {
 }
 
 function default_select_first_unit() {
-    document.getElementById("activeUnitName").textContent = unit1Name;
+    document.getElementById("activeUnitName").textContent = vars["unit1Name"];
     document.getElementById("1").className = "btn btn-info unit-btn";
 }
-default_select_first_unit();
 
 
 function request_control() {
@@ -222,12 +222,12 @@ function minimize_opt(opt) {
     let min_opt = {};
     for (const x in opt) {
         if (x === "unit" ||
-            x === "pow" ||
-            x === "mode" ||
-            x === "stemp" ||
-            x === "shum" ||
-            x === "f_rate" ||
-            x === "f_dir"
+        x === "pow" ||
+        x === "mode" ||
+        x === "stemp" ||
+        x === "shum" ||
+        x === "f_rate" ||
+        x === "f_dir"
         ) {
             min_opt[x] = opt[x];
         }
@@ -320,7 +320,7 @@ function set_unit(str_unitId) {
             document.getElementById("2").className = "btn btn-default unit-btn";
             break;
     }
-    document.getElementById("activeUnitName").textContent = window["unit" + str_unitId + "Name"];
+    document.getElementById("activeUnitName").textContent = vars["unit" + str_unitId + "Name"];
 }
 
 function set_power(bool_is_on) {
@@ -552,16 +552,16 @@ function set_alert(bool_has_alert, str_message) {
 }
 
 function getActiveUnit_IP() {
-    return window["unit" + activeUnitId + "IP"];
+    return vars["unit" + activeUnitId + "IP"];
 }
 
 function update() {
     clearTimeout(control_timeout);
     clearTimeout(sensor_timeout);
     if (!request_is_control_loading)
-        request_control();
+    request_control();
     if (!request_is_sensor_loading)
-        request_sensor();
+    request_sensor();
 }
 
 update();
