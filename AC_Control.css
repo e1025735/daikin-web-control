@@ -1,308 +1,348 @@
-<style type="text/css">
+/*Responsive Styles resize all frames for mobile and tablet view*/
+@media screen and (min-width: 2800px) {
+    .main-container {
+        width: 100%;
+        padding: 1em;
+        padding-left: 80px;
+        padding-top: 4em;
+        color: rgb(100, 90, 80);
+        border: 0px solid blue;
+    }
 
-	/*Responsive Styles resize all frames for mobile and tablet view*/
-	@media screen and (min-width : 2800px){
-    	 .main-container {
-        	width: 100%;
-        	padding:1em;
-        	padding-left: 80px;
-        	padding-top: 4em;
-        	color: rgb(100,90,80);
-        	border: 0px solid blue;
-    	}
-     	img {
-    		margin:auto;
-    		display:block;
-    	}
-    	.logo {
-    		float: left;
-    		width: 100%;
-			background-color: rgb(191,191,191);
-			border: 0px solid orange;
-		}
-		.row {
-			padding-left: 1em;
-			border: 0px green solid;
-		}
-		.power-container {
-			width: 20%;
-			padding-left: 1em;
-			float: left;
-			border: 0px blue solid;
-	 	}
-		.timer-container {
-			width: 25%;
-			padding-left: 1em;
-			float: left;
-			border: 0px purple solid;
-		}
-		.temp-container {
-			float: right;
-			padding-right: 1em;
-  			border: 0px red solid;
-	 	}
-	}
-	@media screen and (max-width : 2800px){
-   		.main-container {
-        	width: 100%;
-        	padding:1em;
-        	padding-top: 4em;
-        	color: rgb(100,90,80);
-        	border: 0px solid red;
-    	}
-    	img {
-    		margin:auto;
-    		display:block;
-    	}
-    	.logo {
-    		float: left;
-    		width: 100%;
-			background-color: rgb(191,191,191);
-			border: 0px solid orange;
-		}
-		.row {
-			padding-left: 1em;
-			border: 0px green solid;
-		}
-		.power-container {
-			width: 20%;
-			padding-left: 1em;
-			float: left;
-			border: 0px blue solid;
-	 	}
-		.timer-container {
-			width: 25%;
-			padding-left: 1em;
-			float: left;
-			border: 0px purple solid;
-		}
-		.temp-container {
-			float: right;
-			padding-right: 2em;
-  			border: 0px red solid;
-	 	}
-	}
+    img {
+        margin: auto;
+        display: block;
+    }
 
-	@media screen and (max-width : 600px){
-    	.main-container {
-        	width: 100%;
-        	padding:1em;
-        	padding-top: 4em;
-        	color: rgb(100,90,80);
-        	border: 0px solid green;
-    	}
-    	img {
-    		margin:auto;
-    		display:block;
-    	}
-    	.logo {
-    		float: left;
-			vertical-align: right;
-			width: 100%;
-			height: auto;
-  			margin-bottom: 10px;
-			border: 0px solid orange;
-		}
-		.row {
-			padding-left: 0em;
-			border: 0px green solid;
-		}
-		.power-container {
-			width: 30%;
-			padding-left: 1em;
-			float: left;
-			border: 0px blue solid;
-	 	}
-		.timer-container {
-			width: 100%;
-			padding-left: 1em;
-			padding-top: 0.5em;
-			clear: both;
-			border: 0px purple solid;
-		}
-		.temp-container {
-			float: right;
-			padding-right: 1em;
-  			border: 0px red solid;
-	 	}
-	}
+    .logo {
+        float: left;
+        width: 100%;
+        background-color: rgb(191, 191, 191);
+        border: 0px solid orange;
+    }
 
-	.timer-container .btn {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.4em;
-		min-height: 3em;
-	}
-	.timer-summary {
-		display: inline-block;
-	}
-	.timer-slot-label {
-		display: block;
-		font-size: 1em;
-		line-height: 1.2em;
-		white-space: nowrap;
-	}
+    .row {
+        padding-left: 1em;
+        border: 0px green solid;
+    }
 
-	.timer-modal-backdrop {
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background-color: rgba(0,0,0,0.4);
-		z-index: 1040;
-	}
+    .power-container {
+        width: 20%;
+        padding-left: 1em;
+        float: left;
+        border: 0px blue solid;
+    }
 
-	body.timer-modal-open {
-		overflow: hidden;
-	}
-	.timer-modal {
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		display: flex;
-		align-items: flex-start;
-		justify-content: center;
-		padding: 4em 1em 1em 1em;
-		z-index: 1050;
-	}
-	.timer-modal .modal-dialog {
-		display: flex;
-		flex-direction: column;
-		width: 100%;
-		max-width: 480px;
-		max-height: 100%;
-		min-height: 0;
-	}
-	.timer-modal .modal-content {
-		display: flex;
-		flex-direction: column;
-		flex: 1 1 auto;
-		min-height: 0;
-		overflow: hidden;
-		background-color: rgb(255,255,255);
-		border-radius: 6px;
-		box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-	}
-	.timer-modal .modal-header,
-	.timer-modal .modal-footer {
-		flex-shrink: 0;
-	}
-	.timer-modal .modal-body {
-		flex: 1 1 auto;
-		overflow-x: hidden;
-		overflow-y: auto;
-		min-height: 0;
-	}
-	.timer-modal .modal-header,
-	.timer-modal .modal-body,
-	.timer-modal .modal-footer {
-		padding: 1em;
-	}
-	.timer-modal .modal-header {
-		border-bottom: 1px solid rgb(229,229,229);
-	}
-	.timer-modal .modal-footer {
-		border-top: 1px solid rgb(229,229,229);
-		text-align: right;
-	}
-	.timer-modal .modal-title {
-		font-size: 1.15em;
-		margin: 0;
-	}
-	.timer-modal .close {
-		float: right;
-		min-width: 44px;
-		min-height: 44px;
-		padding: 0;
-		font-size: 1.5em;
-		line-height: 1;
-		color: rgb(100,90,80);
-		background-color: transparent;
-		border: 0;
-		border-radius: 4px;
-		cursor: pointer;
-		margin: -0.5em -0.5em 0 0;
-	}
-	.timer-modal .close:hover,
-	.timer-modal .close:focus {
-		background-color: rgb(229,229,229);
-		outline: none;
-	}
+    .timer-container {
+        width: 25%;
+        padding-left: 1em;
+        float: left;
+        border: 0px purple solid;
+    }
 
-	.timer-slot {
-		margin-bottom: 1.5em;
-	}
-	.timer-slot h4 {
-		margin-top: 0;
-		margin-bottom: 0.75em;
-	}
-	.timer-mode-btn.btn {
-		min-height: 44px;
-		padding: 10px 16px;
-		font-size: 15px;
-	}
-	.timer-mode-btn.btn.active,
-	.timer-mode-btn.btn.active:focus,
-	.timer-mode-btn.btn.active:hover {
-		background-color: rgb(91,192,222);
-		border-color: rgb(70,184,218);
-		color: rgb(255,255,255);
-	}
-	.timer-entry {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.75em;
-		margin: 1em 0;
-	}
-	.timer-entry label {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.5em;
-		margin: 0;
-		font-weight: normal;
-	}
-	.timer-num.form-control,
-	.timer-time.form-control {
-		display: inline-block;
-		min-height: 44px;
-		padding: 8px 12px;
-		font-size: 16px;
-		text-align: center;
-		border-radius: 4px;
-	}
-	.timer-num.form-control {
-		width: 5em;
-	}
-	.timer-time.form-control {
-		width: 9em;
-	}
-	.timer-actions {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.5em;
-		margin-top: 1em;
-	}
-	.timer-actions .btn {
-		min-height: 44px;
-		padding: 10px 16px;
-		font-size: 15px;
-	}
-	.timer-current {
-		display: block;
-		width: 100%;
-		margin: 0.5em 0 0 0;
-		font-size: 0.95em;
-		color: rgb(120,110,100);
-	}
+    .temp-container {
+        float: right;
+        padding-right: 1em;
+        border: 0px red solid;
+    }
+}
 
-	@media screen and (max-width : 600px){
-		.timer-modal {
-			padding: 1em 0.5em;
-		}
-	}
-	</style>
+@media screen and (max-width: 2800px) {
+    .main-container {
+        width: 100%;
+        padding: 1em;
+        padding-top: 4em;
+        color: rgb(100, 90, 80);
+        border: 0px solid red;
+    }
+
+    img {
+        margin: auto;
+        display: block;
+    }
+
+    .logo {
+        float: left;
+        width: 100%;
+        background-color: rgb(191, 191, 191);
+        border: 0px solid orange;
+    }
+
+    .row {
+        padding-left: 1em;
+        border: 0px green solid;
+    }
+
+    .power-container {
+        width: 20%;
+        padding-left: 1em;
+        float: left;
+        border: 0px blue solid;
+    }
+
+    .timer-container {
+        width: 25%;
+        padding-left: 1em;
+        float: left;
+        border: 0px purple solid;
+    }
+
+    .temp-container {
+        float: right;
+        padding-right: 2em;
+        border: 0px red solid;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .main-container {
+        width: 100%;
+        padding: 1em;
+        padding-top: 4em;
+        color: rgb(100, 90, 80);
+        border: 0px solid green;
+    }
+
+    img {
+        margin: auto;
+        display: block;
+    }
+
+    .logo {
+        float: left;
+        vertical-align: right;
+        width: 100%;
+        height: auto;
+        margin-bottom: 10px;
+        border: 0px solid orange;
+    }
+
+    .row {
+        padding-left: 0em;
+        border: 0px green solid;
+    }
+
+    .power-container {
+        width: 30%;
+        padding-left: 1em;
+        float: left;
+        border: 0px blue solid;
+    }
+
+    .timer-container {
+        width: 100%;
+        padding-left: 1em;
+        padding-top: 0.5em;
+        clear: both;
+        border: 0px purple solid;
+    }
+
+    .temp-container {
+        float: right;
+        padding-right: 1em;
+        border: 0px red solid;
+    }
+}
+
+.timer-container .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    min-height: 3em;
+}
+
+.timer-summary {
+    display: inline-block;
+}
+
+.timer-slot-label {
+    display: block;
+    font-size: 1em;
+    line-height: 1.2em;
+    white-space: nowrap;
+}
+
+.timer-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 1040;
+}
+
+body.timer-modal-open {
+    overflow: hidden;
+}
+
+.timer-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 4em 1em 1em 1em;
+    z-index: 1050;
+}
+
+.timer-modal .modal-dialog {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 480px;
+    max-height: 100%;
+    min-height: 0;
+}
+
+.timer-modal .modal-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    background-color: rgb(255, 255, 255);
+    border-radius: 6px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.timer-modal .modal-header,
+.timer-modal .modal-footer {
+    flex-shrink: 0;
+}
+
+.timer-modal .modal-body {
+    flex: 1 1 auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.timer-modal .modal-header,
+.timer-modal .modal-body,
+.timer-modal .modal-footer {
+    padding: 1em;
+}
+
+.timer-modal .modal-header {
+    border-bottom: 1px solid rgb(229, 229, 229);
+}
+
+.timer-modal .modal-footer {
+    border-top: 1px solid rgb(229, 229, 229);
+    text-align: right;
+}
+
+.timer-modal .modal-title {
+    font-size: 1.15em;
+    margin: 0;
+}
+
+.timer-modal .close {
+    float: right;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+    font-size: 1.5em;
+    line-height: 1;
+    color: rgb(100, 90, 80);
+    background-color: transparent;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: -0.5em -0.5em 0 0;
+}
+
+.timer-modal .close:hover,
+.timer-modal .close:focus {
+    background-color: rgb(229, 229, 229);
+    outline: none;
+}
+
+.timer-slot {
+    margin-bottom: 1.5em;
+}
+
+.timer-slot h4 {
+    margin-top: 0;
+    margin-bottom: 0.75em;
+}
+
+.timer-mode-btn.btn {
+    min-height: 44px;
+    padding: 10px 16px;
+    font-size: 15px;
+}
+
+.timer-mode-btn.btn.active,
+.timer-mode-btn.btn.active:focus,
+.timer-mode-btn.btn.active:hover {
+    background-color: rgb(91, 192, 222);
+    border-color: rgb(70, 184, 218);
+    color: rgb(255, 255, 255);
+}
+
+.timer-entry {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75em;
+    margin: 1em 0;
+}
+
+.timer-entry label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    margin: 0;
+    font-weight: normal;
+}
+
+.timer-num.form-control,
+.timer-time.form-control {
+    display: inline-block;
+    min-height: 44px;
+    padding: 8px 12px;
+    font-size: 16px;
+    text-align: center;
+    border-radius: 4px;
+}
+
+.timer-num.form-control {
+    width: 5em;
+}
+
+.timer-time.form-control {
+    width: 9em;
+}
+
+.timer-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5em;
+    margin-top: 1em;
+}
+
+.timer-actions .btn {
+    min-height: 44px;
+    padding: 10px 16px;
+    font-size: 15px;
+}
+
+.timer-current {
+    display: block;
+    width: 100%;
+    margin: 0.5em 0 0 0;
+    font-size: 0.95em;
+    color: rgb(120, 110, 100);
+}
+
+@media screen and (max-width: 600px) {
+    .timer-modal {
+        padding: 1em 0.5em;
+    }
+}
