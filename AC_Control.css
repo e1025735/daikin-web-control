@@ -1,147 +1,70 @@
-/*Responsive Styles resize all frames for mobile and tablet view*/
-@media screen and (min-width: 2800px) {
-    .main-container {
-        width: 100%;
-        padding: 1em;
-        padding-left: 80px;
-        padding-top: 4em;
-        color: rgb(100, 90, 80);
-        border: 0px solid blue;
-    }
-
-    img {
-        margin: auto;
-        display: block;
-    }
-
-    .logo {
-        float: left;
-        width: 100%;
-        background-color: rgb(191, 191, 191);
-        border: 0px solid orange;
-    }
-
-    .row {
-        padding-left: 1em;
-        border: 0px green solid;
-    }
-
-    .power-container {
-        width: 20%;
-        padding-left: 1em;
-        float: left;
-        border: 0px blue solid;
-    }
-
-    .timer-container {
-        width: 25%;
-        padding-left: 1em;
-        float: left;
-        border: 0px purple solid;
-    }
-
-    .temp-container {
-        float: right;
-        padding-right: 1em;
-        border: 0px red solid;
-    }
+img {
+    margin: auto;
+    display: block;
 }
 
-@media screen and (max-width: 2800px) {
-    .main-container {
-        width: 100%;
-        padding: 1em;
-        padding-top: 4em;
-        color: rgb(100, 90, 80);
-        border: 0px solid red;
-    }
-
-    img {
-        margin: auto;
-        display: block;
-    }
-
-    .logo {
-        float: left;
-        width: 100%;
-        background-color: rgb(191, 191, 191);
-        border: 0px solid orange;
-    }
-
-    .row {
-        padding-left: 1em;
-        border: 0px green solid;
-    }
-
-    .power-container {
-        width: 20%;
-        padding-left: 1em;
-        float: left;
-        border: 0px blue solid;
-    }
-
-    .timer-container {
-        width: 25%;
-        padding-left: 1em;
-        float: left;
-        border: 0px purple solid;
-    }
-
-    .temp-container {
-        float: right;
-        padding-right: 2em;
-        border: 0px red solid;
-    }
+.main-container {
+    width: 100%;
+    padding: 1em;
+    padding-top: 4em;
+    color: rgb(100, 90, 80);
 }
 
-@media screen and (max-width: 600px) {
-    .main-container {
-        width: 100%;
-        padding: 1em;
-        padding-top: 4em;
-        color: rgb(100, 90, 80);
-        border: 0px solid green;
-    }
+.logo {
+    float: left;
+    width: 100%;
+    background-color: rgb(191, 191, 191);
+}
 
-    img {
-        margin: auto;
-        display: block;
-    }
+.row {
+    padding-left: 1em;
+}
 
+.power-container {
+    width: 20%;
+    padding-left: 1em;
+    float: left;
+}
+
+.timer-container {
+    width: 25%;
+    padding-left: 1em;
+    float: left;
+}
+
+.temp-container {
+    float: right;
+    padding-right: 2em;
+}
+
+@media (max-width: 599px) {
     .logo {
-        float: left;
-        vertical-align: right;
-        width: 100%;
         height: auto;
         margin-bottom: 10px;
-        border: 0px solid orange;
     }
+    .row { padding-left: 0; }
+    .power-container { width: 45%; }
+    .timer-container { width: 55%; }
+    .temp-container { padding-top: 1em; padding-right: 1em; }
+    .timer-modal { padding: 1em 0.5em; }
+}
 
-    .row {
-        padding-left: 0em;
-        border: 0px green solid;
+@media (min-width: 600px) and (max-width: 2799px) {
+    .logo {
+        height: auto;
+        margin-bottom: 10px;
     }
+    .row { padding-left: 0; }
+    .power-container { width: 25%;}
+    .timer-container { width: 30%;}
+    .temp-container { padding-top: 0; }
+    .timer-modal { padding: 1em 0.5em; }
+}
 
-    .power-container {
-        width: 30%;
-        padding-left: 1em;
-        float: left;
-        border: 0px blue solid;
-    }
 
-    .timer-container {
-        width: 100%;
-        padding-left: 1em;
-        padding-top: 0.5em;
-        clear: both;
-        border: 0px purple solid;
-    }
-
-    .temp-container {
-        float: right;
-        padding-right: 1em;
-        border: 0px red solid;
-    }
+@media (min-width: 2800px) {
+    .main-container { padding-left: 80px; }
+    .temp-container { padding-right: 1em; }
 }
 
 .timer-container .btn {
@@ -149,10 +72,6 @@
     align-items: center;
     gap: 0.4em;
     min-height: 3em;
-}
-
-.timer-summary {
-    display: inline-block;
 }
 
 .timer-slot-label {
@@ -164,10 +83,7 @@
 
 .timer-modal-backdrop {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     background-color: rgba(0, 0, 0, 0.4);
     z-index: 1040;
 }
@@ -178,14 +94,11 @@ body.timer-modal-open {
 
 .timer-modal {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    padding: 4em 1em 1em 1em;
+    padding: 4em 1em 1em;
     z-index: 1050;
 }
 
@@ -210,21 +123,14 @@ body.timer-modal-open {
 }
 
 .timer-modal .modal-header,
-.timer-modal .modal-footer {
-    flex-shrink: 0;
-}
-
-.timer-modal .modal-body {
-    flex: 1 1 auto;
-    overflow-x: hidden;
-    overflow-y: auto;
-    min-height: 0;
-}
-
-.timer-modal .modal-header,
 .timer-modal .modal-body,
 .timer-modal .modal-footer {
     padding: 1em;
+}
+
+.timer-modal .modal-header,
+.timer-modal .modal-footer {
+    flex-shrink: 0;
 }
 
 .timer-modal .modal-header {
@@ -236,9 +142,16 @@ body.timer-modal-open {
     text-align: right;
 }
 
+.timer-modal .modal-body {
+    flex: 1 1 auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    min-height: 0;
+}
+
 .timer-modal .modal-title {
-    font-size: 1.15em;
     margin: 0;
+    font-size: 1.15em;
 }
 
 .timer-modal .close {
@@ -246,6 +159,7 @@ body.timer-modal-open {
     min-width: 44px;
     min-height: 44px;
     padding: 0;
+    margin: -0.5em -0.5em 0 0;
     font-size: 1.5em;
     line-height: 1;
     color: rgb(100, 90, 80);
@@ -253,7 +167,6 @@ body.timer-modal-open {
     border: 0;
     border-radius: 4px;
     cursor: pointer;
-    margin: -0.5em -0.5em 0 0;
 }
 
 .timer-modal .close:hover,
@@ -311,13 +224,8 @@ body.timer-modal-open {
     border-radius: 4px;
 }
 
-.timer-num.form-control {
-    width: 5em;
-}
-
-.timer-time.form-control {
-    width: 9em;
-}
+.timer-num.form-control  { width: 5em; }
+.timer-time.form-control { width: 9em; }
 
 .timer-actions {
     display: flex;
@@ -336,13 +244,7 @@ body.timer-modal-open {
 .timer-current {
     display: block;
     width: 100%;
-    margin: 0.5em 0 0 0;
+    margin: 0.5em 0 0;
     font-size: 0.95em;
     color: rgb(120, 110, 100);
-}
-
-@media screen and (max-width: 600px) {
-    .timer-modal {
-        padding: 1em 0.5em;
-    }
 }
