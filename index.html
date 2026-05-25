@@ -56,6 +56,18 @@
 		  				<i class="fa fa-power-off" id="powerIcn" style="font-size:1.6em;color:red;"></i><b style="font-size:1.5em;" id="power"> OFF</b>
 		  			</a>
 		  		</div>
+		  		<!-- TIMER -->
+		  		<div class="timer-container">
+		  		<h4>Timer</h4>
+		  			<a class="btn btn-default" id="timerBtn" onclick='timer_open_dialog();' title="Set ON/OFF timer">
+		  				<i class="fa-regular fa-clock" id="timerIcn" style="font-size:1.6em;"></i>
+		  				<span class="timer-summary" id="timerSummary">
+		  					<b id="timerOnLabel" class="timer-slot-label sr-only"><i class="fa fa-power-off" style="color:green;"></i> <span id="timerOnCountdown"></span></b>
+		  					<b id="timerOffLabel" class="timer-slot-label sr-only"><i class="fa fa-power-off" style="color:red;"></i> <span id="timerOffCountdown"></span></b>
+		  					<b id="timerNoneLabel" style="font-size:1.5em;"> --</b>
+		  				</span>
+		  			</a>
+		  		</div>
 		  		<div class="temp-container" onclick='resetTemp_onclick();'>
 		  			<!-- TEMPERATURES -->
 					<h4>Measured temperatures</h4>
@@ -129,6 +141,70 @@
 	  		</div>
 		</div>
 	</div>
+
+	<!-- Timer dialog -->
+	<div class="timer-modal-backdrop sr-only" id="timerModalBackdrop" onclick='timer_close_dialog();'></div>
+	<div class="timer-modal sr-only" id="timerModal" role="dialog" aria-modal="true" aria-labelledby="timerModalTitle">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" onclick='timer_close_dialog();' aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="timerModalTitle"><i class="fa-regular fa-clock"></i> Timer — <span id="timerModalUnit"></span></h4>
+				</div>
+				<div class="modal-body">
+					<p class="text-muted" style="font-size:0.9em;">Each timer can be set up to 24 hours ahead.</p>
+
+					<!-- ON timer slot -->
+					<div class="timer-slot" data-slot="on">
+						<h4><i class="fa fa-power-off" style="color:green;"></i> Turn ON</h4>
+						<div class="btn-group" role="group" aria-label="ON timer entry mode">
+							<a class="btn btn-default timer-mode-btn active" data-slot="on" data-mode="relative" onclick='timer_set_mode("on","relative");'><i class="fa fa-hourglass-half"></i> In</a>
+							<a class="btn btn-default timer-mode-btn" data-slot="on" data-mode="absolute" onclick='timer_set_mode("on","absolute");'><i class="fa fa-calendar-day"></i> At</a>
+						</div>
+						<div class="timer-entry timer-entry-relative" data-slot="on">
+							<label><input type="number" min="0" max="23" value="0" id="timerOnRelHours" class="form-control timer-num"> h</label>
+							<label><input type="number" min="0" max="59" value="30" id="timerOnRelMinutes" class="form-control timer-num"> m</label>
+						</div>
+						<div class="timer-entry timer-entry-absolute sr-only" data-slot="on">
+							<input type="time" id="timerOnAbs" class="form-control timer-time">
+						</div>
+						<div class="timer-actions">
+							<a class="btn btn-info" onclick='timer_save("on");'><i class="fa fa-check"></i> Save</a>
+							<a class="btn btn-default" onclick='timer_clear("on");' id="timerOnClearBtn"><i class="fa fa-trash"></i> Clear</a>
+							<span class="timer-current sr-only" id="timerOnCurrent"></span>
+						</div>
+					</div>
+
+					<hr>
+
+					<!-- OFF timer slot -->
+					<div class="timer-slot" data-slot="off">
+						<h4><i class="fa fa-power-off" style="color:red;"></i> Turn OFF</h4>
+						<div class="btn-group" role="group" aria-label="OFF timer entry mode">
+							<a class="btn btn-default timer-mode-btn active" data-slot="off" data-mode="relative" onclick='timer_set_mode("off","relative");'><i class="fa fa-hourglass-half"></i> In</a>
+							<a class="btn btn-default timer-mode-btn" data-slot="off" data-mode="absolute" onclick='timer_set_mode("off","absolute");'><i class="fa fa-calendar-day"></i> At</a>
+						</div>
+						<div class="timer-entry timer-entry-relative" data-slot="off">
+							<label><input type="number" min="0" max="23" value="1" id="timerOffRelHours" class="form-control timer-num"> h</label>
+							<label><input type="number" min="0" max="59" value="0" id="timerOffRelMinutes" class="form-control timer-num"> m</label>
+						</div>
+						<div class="timer-entry timer-entry-absolute sr-only" data-slot="off">
+							<input type="time" id="timerOffAbs" class="form-control timer-time">
+						</div>
+						<div class="timer-actions">
+							<a class="btn btn-info" onclick='timer_save("off");'><i class="fa fa-check"></i> Save</a>
+							<a class="btn btn-default" onclick='timer_clear("off");' id="timerOffClearBtn"><i class="fa fa-trash"></i> Clear</a>
+							<span class="timer-current sr-only" id="timerOffCurrent"></span>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<a class="btn btn-default" onclick='timer_close_dialog();'><i class="fa fa-xmark"></i> Close</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
 <script type="text/javascript" src="./daikin_ui.js"></script>
 </body>
 </html>

@@ -42,6 +42,43 @@ This project aims to provide 2 main things:
 - **unoffcial documentation** of Daikin API needed to control the air conditioner
 - **web interface** to manage air conditioner settings
 
+## Timer feature
+
+Each unit can have one ON timer and one OFF timer, set up to 24 hours ahead, independently of each other.
+The active timers are visible next to the ON/OFF button without opening the dialog.
+
+### Disabling the feature
+
+Set `enableTimer: false` in `config.js`:
+
+```js
+const config = {
+    refreshInterval: 2000,
+    enableTimer: false,
+    units: [ ... ]
+};
+```
+
+This kill-switch is read by all three sides:
+
+- the UI hides the timer button and stops polling `/timer.php`,
+- the `/timer.php` endpoint returns `503` for every request,
+- the `timer_worker.php` cron exits immediately without firing anything.
+
+Existing entries in `data/timers.json` are left untouched and resume firing when the flag is flipped back on.
+Default if the flag is missing is `true` (feature on).
+
+### Deployment requirements
+
+State lives in `data/timers.json`, BUT firing requires a background worker!
+For example a cron entry that runs the worker every minute:
+   ```
+   * * * * * php /var/www/html/timer_worker.php >> /var/log/timer.log 2>&1
+   ```
+   On the standard `php:*-apache` image the easiest way is to install `cron`, drop the line above into `/etc/cron.d/daikin-timer`, and start `cron` alongside Apache (via supervisord or a simple entrypoint script).
+
+When the cron worker isn't installed the web UI will still let you set timers, but they'll never fire — only the worker calls the AC!
+
 
 ## Tested Hardware
 

@@ -39,7 +39,17 @@ function set_up(){
             init_unit(config.units[2], 3);
         }
     }
+    if (!is_timer_enabled()) {
+        // Hide the whole timer column when the feature is disabled.
+        const tc = document.querySelector(".timer-container");
+        if (tc) tc.style.display = "none";
+    }
     default_select_first_unit();
+}
+
+// Feature flag accessor — defaults to true if the key is missing so users
+function is_timer_enabled() {
+    return !(typeof config === "object" && config && config.enableTimer === false);
 }
 set_up();
 
@@ -260,6 +270,10 @@ function unit_onclick(str_unit_select) {
     set_unit(str_unit_select);
     request_control();
     resetTemp_onclick()
+    // Timer state is per-unit, so wipe the stale summary and refetch.
+    last_timer_response = { on: null, off: null };
+    timer_render_summary();
+    request_timer();
 }
 
 function power_onclick() {
@@ -562,6 +576,255 @@ function update() {
     request_control();
     if (!request_is_sensor_loading)
     request_sensor();
+    request_timer();
 }
 
 update();
+
+let last_timer_response = { on: null, off: null };
+let timer_refresh_timeout;
+let timer_countdown_interval;
+
+function request_timer() {
+    if (!is_timer_enabled()) return;
+    const ip = getActiveUnit_IP();
+    if (!ip) return;
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState !== 4) return;
+        if (xhr.status === 200) {
+            try {
+                last_timer_response = JSON.parse(xhr.responseText);
+            } catch (e) {
+                last_timer_response = { on: null, off: null };
+            }
+            timer_render_summary();
+            clearTimeout(timer_refresh_timeout);
+            timer_refresh_timeout = setTimeout(request_timer, 15000);
+        }
+    };
+    xhr.open("GET", "./timer.php?unit_ip=" + encodeURIComponent(ip), true);
+    xhr.send();
+}
+
+function timer_render_summary() {
+    const on = last_timer_response && last_timer_response.on;
+    const off = last_timer_response && last_timer_response.off;
+
+    const onLabel = document.getElementById("timerOnLabel");
+    const offLabel = document.getElementById("timerOffLabel");
+    const noneLabel = document.getElementById("timerNoneLabel");
+    const btn = document.getElementById("timerBtn");
+
+    if (!on && !off) {
+        onLabel.classList.add("sr-only");
+        offLabel.classList.add("sr-only");
+        noneLabel.classList.remove("sr-only");
+        btn.classList.remove("btn-info");
+        btn.classList.add("btn-default");
+        return;
+    }
+
+    noneLabel.classList.add("sr-only");
+    btn.classList.remove("btn-default");
+    btn.classList.add("btn-info");
+
+    if (on) {
+        onLabel.classList.remove("sr-only");
+        onLabel.title = "ON at " + format_absolute(on.fire_at);
+        document.getElementById("timerOnCountdown").textContent = format_relative(on.fire_at);
+    } else {
+        onLabel.classList.add("sr-only");
+    }
+
+    if (off) {
+        offLabel.classList.remove("sr-only");
+        offLabel.title = "OFF at " + format_absolute(off.fire_at);
+        document.getElementById("timerOffCountdown").textContent = format_relative(off.fire_at);
+    } else {
+        offLabel.classList.add("sr-only");
+    }
+}
+
+function start_timer_countdown_ticker() {
+    if (timer_countdown_interval) return;
+    timer_countdown_interval = setInterval(function () {
+        if (last_timer_response && (last_timer_response.on || last_timer_response.off)) {
+            timer_render_summary();
+        }
+    }, 30000);
+}
+start_timer_countdown_ticker();
+
+function format_relative(iso) {
+    const target = new Date(iso).getTime();
+    let diff_s = Math.max(0, Math.round((target - Date.now()) / 1000));
+    if (diff_s === 0) return "now";
+
+    const h = Math.floor(diff_s / 3600);
+    const rem = diff_s % 3600;
+    const m = Math.ceil(rem / 60);
+
+    if (m === 60) {
+        return `in ${h + 1}h`;
+    }
+    if (h > 0 && m > 0) return `in ${h}h ${m}m`;
+    if (h > 0) return `in ${h}h`;
+
+    return `in ${m}m`;
+}
+
+function format_absolute(iso) {
+    const d = new Date(iso);
+    const hh = String(d.getHours()).padStart(2, "0");
+    const mm = String(d.getMinutes()).padStart(2, "0");
+    const is_tomorrow = d.getDate() !== new Date().getDate();
+    return hh + ":" + mm + (is_tomorrow ? " (tomorrow)" : "");
+}
+
+
+//---------TIMER DIALOG------------
+function timer_open_dialog() {
+    if (!is_timer_enabled()) return;
+    document.getElementById("timerModalUnit").textContent = vars["unit" + activeUnitId + "Name"] || "";
+
+    // Pre-populate the absolute-time inputs with "now + an hour" as a sensible default.
+    const now = new Date();
+    const default_abs = new Date(now.getTime() + 60 * 60 * 1000);
+    const hh = String(default_abs.getHours()).padStart(2, "0");
+    const mm = String(default_abs.getMinutes()).padStart(2, "0");
+    document.getElementById("timerOnAbs").value  = hh + ":" + mm;
+    document.getElementById("timerOffAbs").value = hh + ":" + mm;
+
+    // Reflect any currently-set timers so the user sees what's pending.
+    timer_render_dialog_current("on", last_timer_response && last_timer_response.on);
+    timer_render_dialog_current("off", last_timer_response && last_timer_response.off);
+
+    document.getElementById("timerModal").classList.remove("sr-only");
+    document.getElementById("timerModalBackdrop").classList.remove("sr-only");
+    document.body.classList.add("timer-modal-open");
+    document.addEventListener("keydown", timer_dialog_escape);
+}
+
+function timer_close_dialog() {
+    document.getElementById("timerModal").classList.add("sr-only");
+    document.getElementById("timerModalBackdrop").classList.add("sr-only");
+    document.body.classList.remove("timer-modal-open");
+    document.removeEventListener("keydown", timer_dialog_escape);
+}
+
+function timer_dialog_escape(e) {
+    if (e.key === "Escape") timer_close_dialog();
+}
+
+function timer_render_dialog_current(slot, entry) {
+    const cur_el = document.getElementById("timer" + slot[0].toUpperCase() + slot.slice(1) + "Current");
+    const clear_btn = document.getElementById("timer" + slot[0].toUpperCase() + slot.slice(1) + "ClearBtn");
+    if (entry) {
+        cur_el.classList.remove("sr-only");
+        cur_el.innerHTML = '<i class="fa fa-circle-info"></i> currently set for ' + format_absolute(entry.fire_at) + ' (' + format_relative(entry.fire_at) + ')';
+        clear_btn.classList.remove("disabled");
+    } else {
+        cur_el.classList.add("sr-only");
+        clear_btn.classList.add("disabled");
+    }
+}
+
+function timer_set_mode(slot, mode) {
+    document.querySelectorAll('.timer-mode-btn[data-slot="' + slot + '"]').forEach(function (el) {
+        if (el.dataset.mode === mode) el.classList.add("active");
+        else el.classList.remove("active");
+    });
+    document.querySelectorAll('.timer-entry[data-slot="' + slot + '"]').forEach(function (el) {
+        if (el.classList.contains("timer-entry-" + mode)) el.classList.remove("sr-only");
+        else el.classList.add("sr-only");
+    });
+}
+
+function timer_compute_fire_at(slot) {
+    const active = document.querySelector('.timer-mode-btn.active[data-slot="' + slot + '"]');
+    const mode = active ? active.dataset.mode : "relative";
+    const prefix = "timer" + slot[0].toUpperCase() + slot.slice(1);
+
+    if (mode === "relative") {
+        const h = parseInt(document.getElementById(prefix + "RelHours").value, 10) || 0;
+        const m = parseInt(document.getElementById(prefix + "RelMinutes").value, 10) || 0;
+        if (h === 0 && m === 0) return null;
+        return new Date(Date.now() + (h * 3600 + m * 60) * 1000);
+    }
+
+    const v = document.getElementById(prefix + "Abs").value; // "HH:MM"
+    if (!v) return null;
+    const parts = v.split(":");
+    const target = new Date();
+    target.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
+    if (target.getTime() <= Date.now()) {
+        target.setDate(target.getDate() + 1);
+    }
+    return target;
+}
+
+function timer_save(slot) {
+    if (!is_timer_enabled()) return;
+    if (!last_control_response) {
+        set_alert(true, "Cannot set timer: AC state not yet loaded");
+        return;
+    }
+    const fire_at = timer_compute_fire_at(slot);
+    if (!fire_at) {
+        set_alert(true, "Pick a duration or a time first");
+        return;
+    }
+    const max = Date.now() + 24 * 3600 * 1000;
+    if (fire_at.getTime() > max) {
+        set_alert(true, "Timers can only be set up to 24 hours in advance");
+        return;
+    }
+
+    const payload = minimize_opt(last_control_response);
+    payload.pow = (slot === "on") ? "1" : "0";
+
+    const body = JSON.stringify({
+        fire_at: fire_at.toISOString(),
+        payload: payload
+    });
+
+    const ip = getActiveUnit_IP();
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState !== 4) return;
+        if (xhr.status === 200) {
+            set_alert(false, "");
+            request_timer();
+            timer_close_dialog();
+        } else {
+            let msg = "Failed to set " + slot.toUpperCase() + " timer";
+            try {
+                const err = JSON.parse(xhr.responseText);
+                if (err && err.error) msg += ": " + err.error;
+            } catch (e) {}
+            set_alert(true, msg);
+        }
+    };
+    xhr.open("POST", "./timer.php?unit_ip=" + encodeURIComponent(ip) + "&slot=" + slot, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(body);
+}
+
+function timer_clear(slot) {
+    if (!is_timer_enabled()) return;
+    const ip = getActiveUnit_IP();
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState !== 4) return;
+        if (xhr.status === 200) {
+            set_alert(false, "");
+            request_timer();
+            timer_render_dialog_current(slot, null);
+        } else {
+            set_alert(true, "Failed to clear " + slot.toUpperCase() + " timer");
+        }
+    };
+    xhr.open("DELETE", "./timer.php?unit_ip=" + encodeURIComponent(ip) + "&slot=" + slot, true);
+    xhr.send();
+}

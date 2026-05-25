@@ -1,5 +1,6 @@
 const config = {
     refreshInterval: 2000, //What time interval should there be between refreshing the information from the AC unit (in milliseconds)
+    enableTimer: true, //Feature flag for the ON/OFF timer feature. Set to false to hide the timer button, disable the /timer.php endpoint, and stop the cron worker from firing pending timers.
     units: [
         /* This units are representations for the AC units within the home.
            The IP represents the IP of the AC unit which must be reachable from the PHP WebServer
