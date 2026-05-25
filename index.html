@@ -10,13 +10,26 @@
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 	<link rel="icon" type="image/x-icon" href="./media/favicon.ico">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" type="text/css" href="./AC_Control.css" media="screen"/>
 
-	<!-- Font Awesome for our button icons -->
+	<script>
+		(function () {
+			try {
+				var stored = localStorage.getItem("theme") || "auto";
+				var resolved = stored;
+				if (stored === "auto") {
+					resolved = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+				}
+				document.documentElement.setAttribute("data-theme", resolved);
+			} catch (e) {
+				document.documentElement.setAttribute("data-theme", "light");
+			}
+		})();
+	</script>
+
+
 	<link href="./font-awesome/css/all.min.css" rel="stylesheet">
-
-	<!-- Bootstrap -->
 	<link href="./bootstrap/css/bootstrap.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="./AC_Control.css" media="screen"/>
 </head>
 <body>
 <div class='main-container' >
@@ -37,6 +50,16 @@
 		</div>
 
 		<div class="container">
+			<!-- Theme switcher -->
+			<div class="row theme-switcher-row">
+				<div class="theme-switcher">
+					<div class="btn-group" role="group" aria-label="Theme">
+						<a class="btn btn-default theme-btn" id="themeAuto" onclick='set_theme("auto");' title="Auto (follow system)" aria-label="Auto theme"><i class="fa-solid fa-circle-half-stroke"></i></a>
+						<a class="btn btn-default theme-btn" id="themeLight" onclick='set_theme("light");' title="Light theme" aria-label="Light theme"><i class="fa-solid fa-sun"></i></a>
+						<a class="btn btn-default theme-btn" id="themeDark" onclick='set_theme("dark");' title="Dark theme" aria-label="Dark theme"><i class="fa-solid fa-moon"></i></a>
+					</div>
+				</div>
+			</div>
 			<div class="row" id="unit-row">
 	   		<div class="col-md-4 col-sm-6">
 	   			<!--Unit Selection -->
@@ -127,7 +150,7 @@
 		  			<!--Target temperature-->
 					<h4><i class="fa-solid fa-temperature-high"></i> Target temperature</h4>
 					<div class="btn-group" >
-						<a class="btn btn-default" style="font-size:2.2em;padding-top:12px;padding-bottom:12px;color: rgb(234,247,235); background-color: rgb(50,100,380)"><b id="target_temp"> ~ C</b></a>
+						<a class="btn btn-default target-temp-pill" id="target_temp_btn"><b id="target_temp"> ~ C</b></a>
 					</div>
 
 					<div class="btn-group-vertical">

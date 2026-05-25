@@ -22,9 +22,69 @@ const vars = {
 let activeUnitId = 1;
 
 
+function get_stored_theme() {
+    try {
+        return localStorage.getItem("theme") || "auto";
+    } catch (e) {
+        return "auto";
+    }
+}
+
+function resolve_theme(mode) {
+    if (mode === "auto") {
+        return (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    }
+    return mode;
+}
+
+function set_theme(mode) {
+    if (mode !== "auto" && mode !== "light" && mode !== "dark") return;
+    try {
+        localStorage.setItem("theme", mode);
+    } catch (e) {}
+    document.documentElement.setAttribute("data-theme", resolve_theme(mode));
+    highlight_theme_button(mode);
+}
+
+function highlight_theme_button(mode) {
+    const target_id = "theme" + mode.charAt(0).toUpperCase() + mode.slice(1);
+    ["themeAuto", "themeLight", "themeDark"].forEach(function (id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (id === target_id) {
+            el.classList.remove("btn-default");
+            el.classList.add("btn-info");
+        } else {
+            el.classList.remove("btn-info");
+            el.classList.add("btn-default");
+        }
+    });
+}
+
+function init_theme() {
+    // The inline head script already applied data-theme to <html>; just sync the button highlights.
+    highlight_theme_button(get_stored_theme());
+    // Live-update the page when the user is in "auto" and the OS preference changes.
+    if (window.matchMedia) {
+        const mq = window.matchMedia("(prefers-color-scheme: dark)");
+        const listener = function () {
+            if (get_stored_theme() === "auto") {
+                document.documentElement.setAttribute("data-theme", mq.matches ? "dark" : "light");
+            }
+        };
+        if (mq.addEventListener) {
+            mq.addEventListener("change", listener);
+        } else if (mq.addListener) {
+            mq.addListener(listener);
+        }
+    }
+}
+
+
 //---------SET UP FUNCTIONS------------
 // Setup from the config.js properties
 function set_up(){
+    init_theme();
     timer = config.refreshInterval;
     init_unit(config.units[0], 1);
     // if there is only one unit do not display the selection for the units
