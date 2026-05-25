@@ -2,5 +2,20 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
-  ]
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["^font-awesome/\\.version$"],
+      "matchStrings": ["^(?<currentValue>.+?)\\s*$"],
+      "depNameTemplate": "FortAwesome/Font-Awesome",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^(?<version>.+)$"
+    }
+  ],
+  "postUpgradeTasks": {
+    "commands": ["bash scripts/update-fontawesome.sh {{{newValue}}}"],
+    "fileFilters": ["font-awesome/**"],
+    "executionMode": "update"
+  }
 }
