@@ -40,12 +40,12 @@
 			<div class="navbar-brand" id="navbar-brand">
 				<p> AC Control  <var id="activeUnitName"></var> </p>
 			</div>
-			<p class="navbar-text ml-auto sr-only" id="spinner" ><i class="fa-solid fa-arrows-rotate fa-spin fa-3x fa-fw"></i></p>
+			<p class="navbar-text ms-auto visually-hidden" id="spinner" ><i class="fa-solid fa-arrows-rotate fa-spin fa-3x fa-fw"></i></p>
 		  </div>
 		</nav>
 
-		<div  class="alert alert-danger sr-only" id="alert">
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<div  class="alert alert-danger alert-dismissible visually-hidden" id="alert">
+			<button type="button" class="btn-close" aria-label="Close"></button>
 			<p></p>
 		</div>
 
@@ -85,8 +85,8 @@
 		  			<a class="btn btn-light" id="timerBtn" onclick='timer_open_dialog();' title="Set ON/OFF timer">
 		  				<i class="fa-regular fa-clock" id="timerIcn" style="font-size:1.6em;"></i>
 		  				<span class="timer-summary" id="timerSummary">
-		  					<b id="timerOnLabel" class="timer-slot-label sr-only"><i class="fa fa-power-off" style="color:green;"></i> <span id="timerOnCountdown"></span></b>
-		  					<b id="timerOffLabel" class="timer-slot-label sr-only"><i class="fa fa-power-off" style="color:red;"></i> <span id="timerOffCountdown"></span></b>
+		  					<b id="timerOnLabel" class="timer-slot-label visually-hidden"><i class="fa fa-power-off" style="color:green;"></i> <span id="timerOnCountdown"></span></b>
+		  					<b id="timerOffLabel" class="timer-slot-label visually-hidden"><i class="fa fa-power-off" style="color:red;"></i> <span id="timerOffCountdown"></span></b>
 		  					<b id="timerNoneLabel" style="font-size:1.5em;"> --</b>
 		  				</span>
 		  			</a>
@@ -166,8 +166,8 @@
 	</div>
 
 	<!-- Timer dialog -->
-	<div class="timer-modal-backdrop sr-only" id="timerModalBackdrop" onclick='timer_close_dialog();'></div>
-	<div class="timer-modal sr-only" id="timerModal" role="dialog" aria-modal="true" aria-labelledby="timerModalTitle">
+	<div class="timer-modal-backdrop visually-hidden" id="timerModalBackdrop" onclick='timer_close_dialog();'></div>
+	<div class="timer-modal visually-hidden" id="timerModal" role="dialog" aria-modal="true" aria-labelledby="timerModalTitle">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -188,13 +188,13 @@
 							<label><input type="number" min="0" max="23" value="0" id="timerOnRelHours" class="form-control timer-num"> h</label>
 							<label><input type="number" min="0" max="59" value="30" id="timerOnRelMinutes" class="form-control timer-num"> m</label>
 						</div>
-						<div class="timer-entry timer-entry-absolute sr-only" data-slot="on">
+						<div class="timer-entry timer-entry-absolute visually-hidden" data-slot="on">
 							<input type="time" id="timerOnAbs" class="form-control timer-time">
 						</div>
 						<div class="timer-actions">
 							<a class="btn btn-info" onclick='timer_save("on");'><i class="fa fa-check"></i> Save</a>
 							<a class="btn btn-light" onclick='timer_clear("on");' id="timerOnClearBtn"><i class="fa fa-trash"></i> Clear</a>
-							<span class="timer-current sr-only" id="timerOnCurrent"></span>
+							<span class="timer-current visually-hidden" id="timerOnCurrent"></span>
 						</div>
 					</div>
 
@@ -211,13 +211,13 @@
 							<label><input type="number" min="0" max="23" value="1" id="timerOffRelHours" class="form-control timer-num"> h</label>
 							<label><input type="number" min="0" max="59" value="0" id="timerOffRelMinutes" class="form-control timer-num"> m</label>
 						</div>
-						<div class="timer-entry timer-entry-absolute sr-only" data-slot="off">
+						<div class="timer-entry timer-entry-absolute visually-hidden" data-slot="off">
 							<input type="time" id="timerOffAbs" class="form-control timer-time">
 						</div>
 						<div class="timer-actions">
 							<a class="btn btn-info" onclick='timer_save("off");'><i class="fa fa-check"></i> Save</a>
 							<a class="btn btn-light" onclick='timer_clear("off");' id="timerOffClearBtn"><i class="fa fa-trash"></i> Clear</a>
-							<span class="timer-current sr-only" id="timerOffCurrent"></span>
+							<span class="timer-current visually-hidden" id="timerOffCurrent"></span>
 						</div>
 					</div>
 				</div>

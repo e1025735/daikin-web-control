@@ -489,9 +489,9 @@ function show_target_temp(bool_show_temp) {
     var tt_col = document.getElementById("target_temp_col");
 
     if (bool_show_temp) {
-        tt_col.classList.remove("sr-only");
+        tt_col.classList.remove("visually-hidden");
     } else {
-        tt_col.classList.add("sr-only");
+        tt_col.classList.add("visually-hidden");
     }
 }
 
@@ -604,24 +604,24 @@ function sleep(num_ms) {
 function set_loading(bool_is_loading) {
     var spinner = document.getElementById("spinner");
     if (bool_is_loading) {
-        spinner.classList.remove("sr-only");
-        spinner.className = "navbar-text ml-auto";
+        spinner.classList.remove("visually-hidden");
+        spinner.className = "navbar-text ms-auto";
         sleep(3000);
     } else {
-        spinner.className = "navbar-text ml-auto sr-only";
-        spinner.classList.add("sr-only");
+        spinner.className = "navbar-text ms-auto visually-hidden";
+        spinner.classList.add("visually-hidden");
     }
 }
 
 function set_alert(bool_has_alert, str_message) {
     let alert_element = document.getElementById("alert");
     if (bool_has_alert) {
-        alert_element.classList.remove("sr-only");
-        alert_element.className = "alert alert-danger";
+        alert_element.classList.remove("visually-hidden");
+        alert_element.className = "alert alert-danger alert-dismissible";
         alert_element.lastElementChild.innerHTML = `<b>Error:</b> ${str_message}`;
     } else {
-        alert_element.className = "alert alert-danger sr-only";
-        alert_element.classList.add("sr-only");
+        alert_element.className = "alert alert-danger alert-dismissible visually-hidden";
+        alert_element.classList.add("visually-hidden");
     }
 }
 
@@ -677,32 +677,32 @@ function timer_render_summary() {
     const btn = document.getElementById("timerBtn");
 
     if (!on && !off) {
-        onLabel.classList.add("sr-only");
-        offLabel.classList.add("sr-only");
-        noneLabel.classList.remove("sr-only");
+        onLabel.classList.add("visually-hidden");
+        offLabel.classList.add("visually-hidden");
+        noneLabel.classList.remove("visually-hidden");
         btn.classList.remove("btn-info");
         btn.classList.add("btn-light");
         return;
     }
 
-    noneLabel.classList.add("sr-only");
+    noneLabel.classList.add("visually-hidden");
     btn.classList.remove("btn-light");
     btn.classList.add("btn-info");
 
     if (on) {
-        onLabel.classList.remove("sr-only");
+        onLabel.classList.remove("visually-hidden");
         onLabel.title = "ON at " + format_absolute(on.fire_at);
         document.getElementById("timerOnCountdown").textContent = format_relative(on.fire_at);
     } else {
-        onLabel.classList.add("sr-only");
+        onLabel.classList.add("visually-hidden");
     }
 
     if (off) {
-        offLabel.classList.remove("sr-only");
+        offLabel.classList.remove("visually-hidden");
         offLabel.title = "OFF at " + format_absolute(off.fire_at);
         document.getElementById("timerOffCountdown").textContent = format_relative(off.fire_at);
     } else {
-        offLabel.classList.add("sr-only");
+        offLabel.classList.add("visually-hidden");
     }
 }
 
@@ -760,15 +760,15 @@ function timer_open_dialog() {
     timer_render_dialog_current("on", last_timer_response && last_timer_response.on);
     timer_render_dialog_current("off", last_timer_response && last_timer_response.off);
 
-    document.getElementById("timerModal").classList.remove("sr-only");
-    document.getElementById("timerModalBackdrop").classList.remove("sr-only");
+    document.getElementById("timerModal").classList.remove("visually-hidden");
+    document.getElementById("timerModalBackdrop").classList.remove("visually-hidden");
     document.body.classList.add("timer-modal-open");
     document.addEventListener("keydown", timer_dialog_escape);
 }
 
 function timer_close_dialog() {
-    document.getElementById("timerModal").classList.add("sr-only");
-    document.getElementById("timerModalBackdrop").classList.add("sr-only");
+    document.getElementById("timerModal").classList.add("visually-hidden");
+    document.getElementById("timerModalBackdrop").classList.add("visually-hidden");
     document.body.classList.remove("timer-modal-open");
     document.removeEventListener("keydown", timer_dialog_escape);
 }
@@ -781,11 +781,11 @@ function timer_render_dialog_current(slot, entry) {
     const cur_el = document.getElementById("timer" + slot[0].toUpperCase() + slot.slice(1) + "Current");
     const clear_btn = document.getElementById("timer" + slot[0].toUpperCase() + slot.slice(1) + "ClearBtn");
     if (entry) {
-        cur_el.classList.remove("sr-only");
+        cur_el.classList.remove("visually-hidden");
         cur_el.innerHTML = '<i class="fa fa-circle-info"></i> currently set for ' + format_absolute(entry.fire_at) + ' (' + format_relative(entry.fire_at) + ')';
         clear_btn.classList.remove("disabled");
     } else {
-        cur_el.classList.add("sr-only");
+        cur_el.classList.add("visually-hidden");
         clear_btn.classList.add("disabled");
     }
 }
@@ -796,8 +796,8 @@ function timer_set_mode(slot, mode) {
         else el.classList.remove("active");
     });
     document.querySelectorAll('.timer-entry[data-slot="' + slot + '"]').forEach(function (el) {
-        if (el.classList.contains("timer-entry-" + mode)) el.classList.remove("sr-only");
-        else el.classList.add("sr-only");
+        if (el.classList.contains("timer-entry-" + mode)) el.classList.remove("visually-hidden");
+        else el.classList.add("visually-hidden");
     });
 }
 

@@ -96,6 +96,8 @@ h4 {
     float: right;
     margin-left: auto;
     padding-right: 2em;
+    width: auto;
+    max-width: none;
 }
 
 .temp-container .btn-light,
@@ -360,6 +362,30 @@ body.timer-modal-open {
 .btn-light:active,
 .btn-light.active {
     border-color: #adadad;
+}
+
+.btn-info,
+.btn-info:hover,
+.btn-info:focus,
+.btn-info:active {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    color: #fff;
+}
+
+.unit-btn,
+.mode-btn,
+.fan-btn,
+.wing-btn,
+.btn-group > .btn:has(img) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-group > .btn:not(.dropdown-toggle):has(+ [style*="display: none"]) {
+    border-top-right-radius: var(--bs-border-radius);
+    border-bottom-right-radius: var(--bs-border-radius);
 }
 
 [data-theme="dark"] .navbar.navbar-light {
