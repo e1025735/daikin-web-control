@@ -52,11 +52,11 @@ function highlight_theme_button(mode) {
         const el = document.getElementById(id);
         if (!el) return;
         if (id === target_id) {
-            el.classList.remove("btn-default");
+            el.classList.remove("btn-light");
             el.classList.add("btn-info");
         } else {
             el.classList.remove("btn-info");
-            el.classList.add("btn-default");
+            el.classList.add("btn-light");
         }
     });
 }
@@ -380,18 +380,18 @@ function set_unit(str_unitId) {
     switch (str_unitId) {
         case "1":
             document.getElementById("1").className = "btn btn-info unit-btn";
-            document.getElementById("2").className = "btn btn-default unit-btn";
-            document.getElementById("3").className = "btn btn-default unit-btn";
+            document.getElementById("2").className = "btn btn-light unit-btn";
+            document.getElementById("3").className = "btn btn-light unit-btn";
             break;
         case "2":
             document.getElementById("2").className = "btn btn-info unit-btn";
-            document.getElementById("3").className = "btn btn-default unit-btn";
-            document.getElementById("1").className = "btn btn-default unit-btn";
+            document.getElementById("3").className = "btn btn-light unit-btn";
+            document.getElementById("1").className = "btn btn-light unit-btn";
             break;
         case "3":
             document.getElementById("3").className = "btn btn-info unit-btn";
-            document.getElementById("1").className = "btn btn-default unit-btn";
-            document.getElementById("2").className = "btn btn-default unit-btn";
+            document.getElementById("1").className = "btn btn-light unit-btn";
+            document.getElementById("2").className = "btn btn-light unit-btn";
             break;
     }
     document.getElementById("activeUnitName").textContent = vars["unit" + str_unitId + "Name"];
@@ -405,13 +405,13 @@ function set_power(bool_is_on) {
     power.textContent = bool_is_on ? " ON" : " OFF";
 
     if (bool_is_on) {
-        powerBtn.classList.remove("btn-default");
+        powerBtn.classList.remove("btn-light");
         powerBtn.classList.add("btn-info");
         powerIcn.style.fontSize = "1.6em";
         powerIcn.style.color = "green";
     } else {
         powerBtn.classList.remove("btn-info");
-        powerBtn.classList.add("btn-default");
+        powerBtn.classList.add("btn-light");
         powerIcn.style.fontSize = "1.6em";
         powerIcn.style.color = "red";
     }
@@ -425,7 +425,7 @@ function resetTemp_onclick() {
 function reset_mode() {
     var mode_list = document.getElementsByClassName("mode-btn btn-info");
     for (var i = 0; i < mode_list.length; ++i) {
-        mode_list[i].className = "btn btn-default mode-btn";
+        mode_list[i].className = "btn btn-light mode-btn";
     }
 }
 
@@ -556,7 +556,7 @@ function reset_fan() {
     var fan_list = document.getElementsByClassName("fan-btn");
     for (var i = 0; i < fan_list.length; ++i) {
         fan_list[i].classList.remove("btn-info");
-        fan_list[i].classList.add("btn-default");
+        fan_list[i].classList.add("btn-light");
     }
     set_fan_level_img(0);
 }
@@ -565,7 +565,7 @@ function reset_wing() {
     var wing_list = document.getElementsByClassName("wing-btn");
     for (var i = 0; i < wing_list.length; ++i) {
         wing_list[i].classList.remove("btn-info");
-        wing_list[i].classList.add("btn-default");
+        wing_list[i].classList.add("btn-light");
     }
 }
 
@@ -574,22 +574,22 @@ function set_wing(num_wing_mode) {
     switch (num_wing_mode) {
         case 0:
             elem = document.getElementById("wing_s");
-            elem.classList.remove("btn-default");
+            elem.classList.remove("btn-light");
             elem.classList.add("btn-info");
             break;
         case 1:
             elem = document.getElementById("wing_v");
-            elem.classList.remove("btn-default");
+            elem.classList.remove("btn-light");
             elem.classList.add("btn-info");
             break;
         case 2:
             elem = document.getElementById("wing_h");
-            elem.classList.remove("btn-default");
+            elem.classList.remove("btn-light");
             elem.classList.add("btn-info");
             break;
         case 3:
             elem = document.getElementById("wing_b");
-            elem.classList.remove("btn-default");
+            elem.classList.remove("btn-light");
             elem.classList.add("btn-info");
             break;
         default:
@@ -605,10 +605,10 @@ function set_loading(bool_is_loading) {
     var spinner = document.getElementById("spinner");
     if (bool_is_loading) {
         spinner.classList.remove("sr-only");
-        spinner.className = "navbar-text navbar-right";
+        spinner.className = "navbar-text ml-auto";
         sleep(3000);
     } else {
-        spinner.className = "navbar-text navbar-right sr-only";
+        spinner.className = "navbar-text ml-auto sr-only";
         spinner.classList.add("sr-only");
     }
 }
@@ -681,12 +681,12 @@ function timer_render_summary() {
         offLabel.classList.add("sr-only");
         noneLabel.classList.remove("sr-only");
         btn.classList.remove("btn-info");
-        btn.classList.add("btn-default");
+        btn.classList.add("btn-light");
         return;
     }
 
     noneLabel.classList.add("sr-only");
-    btn.classList.remove("btn-default");
+    btn.classList.remove("btn-light");
     btn.classList.add("btn-info");
 
     if (on) {
