@@ -234,7 +234,8 @@ function render_week(week) {
 
         const totals = [];
         for (let i = 0; i < 14; i++) totals.push((cool[i] || 0) + (heat[i] || 0));
-        const max = Math.max(0.001, ...totals);
+        const ticks = nice_ticks(Math.max(0.001, ...totals));
+        const max   = ticks[ticks.length - 1];
 
         let this_week_sum = 0, last_week_sum = 0;
         for (let i = 0; i <  7; i++) this_week_sum += totals[i];
@@ -250,7 +251,7 @@ function render_week(week) {
         el.appendChild(legend_cool_heat_two_weeks());
 
         // 7 day groups in chronological order: leftmost = today, rightmost = 6 days ago.
-        const chart = make_chart('usage-chart-grouped');
+        const chart = make_chart('usage-chart-grouped', ticks, max, tick_format_kwh);
         const today = new Date();
         for (let pos = 0; pos < 7; pos++) {
             const days_ago      = pos;
@@ -285,9 +286,10 @@ function render_week(week) {
     } else {
         const values = parse_seq(week.data.datas);
         if (values.length === 0) { render_not_supported('usageWeek'); return; }
-        const max = Math.max(1, ...values);
+        const ticks = nice_ticks(Math.max(1, ...values));
+        const max   = ticks[ticks.length - 1];
 
-        const chart = make_chart('usage-chart-week');
+        const chart = make_chart('usage-chart-week', ticks, max, tick_format_minutes);
         const today = new Date();
         values.forEach(function (mins, idx) {
             const days_ago = values.length - idx;
@@ -320,11 +322,12 @@ function render_year(year) {
             totals.push((cc[m] || 0) + (ch[m] || 0));
             totals.push((pc[m] || 0) + (ph[m] || 0));
         }
-        const max = Math.max(0.001, ...totals);
+        const ticks = nice_ticks(Math.max(0.001, ...totals));
+        const max   = ticks[ticks.length - 1];
 
         el.appendChild(legend_cool_heat_years());
 
-        const chart = make_chart('usage-chart-grouped');
+        const chart = make_chart('usage-chart-grouped', ticks, max, tick_format_kwh);
         for (let m = 0; m < 12; m++) {
             const group = document.createElement('div');
             group.className = 'usage-chart-group';
@@ -354,11 +357,12 @@ function render_year(year) {
             return;
         }
         const all = this_year.concat(prev_year);
-        const max = Math.max(1, ...all);
+        const ticks = nice_ticks(Math.max(1, ...all));
+        const max   = ticks[ticks.length - 1];
 
         el.appendChild(legend_two_years());
 
-        const chart = make_chart('usage-chart-grouped');
+        const chart = make_chart('usage-chart-grouped', ticks, max, tick_format_hours);
         for (let m = 0; m < 12; m++) {
             const group = document.createElement('div');
             group.className = 'usage-chart-group';
@@ -381,14 +385,70 @@ function render_year(year) {
     }
 }
 
-function make_chart(extra_class) {
+function make_chart(extra_class, ticks, tick_max, tick_format) {
     const root = document.createElement('div');
     root.className = 'usage-chart ' + extra_class;
+    root.appendChild(build_axis('left',  ticks, tick_max, tick_format));
     const bars = document.createElement('div');
     bars.className = 'usage-chart-bars';
     root.appendChild(bars);
+    root.appendChild(build_axis('right', ticks, tick_max, tick_format));
     return { root: root, bars: bars };
 }
+
+function build_axis(side, ticks, tick_max, tick_format) {
+    const axis = document.createElement('div');
+    axis.className = 'usage-chart-axis usage-chart-axis-' + side;
+
+    const track = document.createElement('div');
+    track.className = 'usage-chart-axis-track';
+    ticks.forEach(function (t, idx) {
+        const tick = document.createElement('span');
+        tick.className = 'usage-chart-axis-tick';
+        tick.style.bottom = (t / tick_max * 100) + '%';
+        tick.textContent = tick_format(t, idx === ticks.length - 1);
+        track.appendChild(tick);
+    });
+    axis.appendChild(track);
+
+    // Spacer below the track that matches the bar's label area, so the
+    // axis track aligns vertically with the bars' tracks.
+    const spacer = document.createElement('span');
+    spacer.className = 'usage-chart-axis-spacer';
+    spacer.innerHTML = '&nbsp;';
+    axis.appendChild(spacer);
+
+    return axis;
+}
+
+// Round a data max up to "nice" axis ticks: 0, 2, 4, 6, 8 rather than 0, 1.83, …
+function nice_ticks(max) {
+    if (!isFinite(max) || max <= 0) max = 0.1;
+    const target_count = 5;
+    const raw_interval = max / (target_count - 1);
+    const magnitude = Math.pow(10, Math.floor(Math.log10(raw_interval)));
+    const normalized = raw_interval / magnitude;
+    let nice;
+    if      (normalized < 1.5) nice = 1;
+    else if (normalized < 3)   nice = 2;
+    else if (normalized < 7)   nice = 5;
+    else                       nice = 10;
+    const interval = nice * magnitude;
+    const ticks = [];
+    let v = 0;
+    while (v <= max + interval * 0.001) {
+        ticks.push(Math.round(v * 10000) / 10000);
+        v += interval;
+    }
+    return ticks;
+}
+
+function tick_format_kwh(v, is_top) {
+    const num = (v === Math.floor(v) || v >= 10) ? String(Math.round(v)) : v.toFixed(1);
+    return num + (is_top ? ' kWh' : '');
+}
+function tick_format_minutes(v, is_top) { return String(Math.round(v)) + (is_top ? ' min' : ''); }
+function tick_format_hours(v, is_top)   { return String(Math.round(v)) + (is_top ? ' h'   : ''); }
 
 function make_label(text) {
     const lbl = document.createElement('span');
