@@ -23,11 +23,15 @@ import {
     timer_render_summary,
     start_timer_countdown_ticker,
 } from './timer_ui.js';
+import { init_tabs } from './tabs.js';
+import { init_usage, on_usage_tab_shown, on_unit_changed_usage } from './usage.js';
 
 state.refresh_interval_ms = config.refreshInterval;
 
 init_theme();
 init_units(on_unit_changed);
+init_usage();
+init_tabs(on_tab_changed);
 
 if (!is_timer_enabled()) {
     const tc = document.querySelector('.timer-container');
@@ -51,7 +55,12 @@ update();
 function on_unit_changed() {
     state.last_timer_response = { on: null, off: null };
     timer_render_summary();
+    on_unit_changed_usage();
     update();
+}
+
+function on_tab_changed(name) {
+    if (name === 'usage') on_usage_tab_shown();
 }
 
 function wire_static_listeners() {

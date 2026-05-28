@@ -18,6 +18,7 @@
     --danger-border: #ebccd1;
     --shadow: rgba(0, 0, 0, 0.5);
     --backdrop: rgba(0, 0, 0, 0.4);
+    --usage-heat: #ec6e2c;
 }
 
 :root[data-theme="dark"] {
@@ -40,6 +41,7 @@
     --danger-border: #6a2a2a;
     --shadow: rgba(0, 0, 0, 0.7);
     --backdrop: rgba(0, 0, 0, 0.65);
+    --usage-heat: #f59e0b;
 }
 
 img {
@@ -456,4 +458,327 @@ body.timer-modal-open {
 
 [data-theme="dark"] .btn-light img[src*="_off.svg"] {
     filter: invert(1);
+}
+
+.selection-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 1em;
+    flex-wrap: wrap;
+    margin: 0.5em 0 1em;
+}
+
+.unit-selection {
+    flex: 0 1 auto;
+}
+
+.selection-tabs {
+    margin-left: auto;
+}
+
+@media (max-width: 599px) {
+    .selection-row { gap: 0.5em; }
+}
+
+.tab-bar {
+    gap: 0.5em;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.tab-pill.nav-link {
+    border-radius: 999px;
+    color: var(--text);
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0.5em 1.2em;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.tab-pill.nav-link:hover,
+.tab-pill.nav-link:focus {
+    background-color: var(--surface-hover);
+}
+
+.tab-pill.nav-link.active,
+.tab-pill.nav-link.active:hover,
+.tab-pill.nav-link.active:focus {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    color: #fff;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+.usage-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+    margin-bottom: 1em;
+    flex-wrap: wrap;
+}
+
+.usage-toolbar .btn {
+    min-height: 38px;
+}
+
+.usage-fetched-label {
+    color: var(--text-muted);
+    font-size: 0.9em;
+}
+
+.usage-accordion {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 0.75em;
+    background-color: var(--surface);
+    overflow: hidden;
+}
+
+.usage-accordion-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    width: 100%;
+    padding: 0.75em 1em;
+    border: 0;
+    background-color: var(--surface-2);
+    color: var(--text);
+    text-align: left;
+    font-size: 1.05em;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.usage-accordion-header:hover,
+.usage-accordion-header:focus {
+    background-color: var(--surface-hover);
+    outline: none;
+}
+
+.usage-accordion-chevron {
+    transition: transform 0.15s ease;
+    color: var(--text-muted);
+}
+
+.usage-accordion.collapsed .usage-accordion-chevron {
+    transform: rotate(-90deg);
+}
+
+.usage-accordion-body {
+    padding: 1em;
+}
+
+.usage-accordion.collapsed .usage-accordion-body {
+    display: none;
+}
+
+.usage-placeholder {
+    margin: 0;
+}
+
+.usage-not-supported {
+    color: var(--text-muted);
+    font-style: italic;
+    margin: 0;
+}
+
+.usage-today-value {
+    font-size: 2em;
+    font-weight: bold;
+    margin: 0;
+    color: var(--target-temp-bg);
+}
+
+.usage-today-sub {
+    color: var(--text-muted);
+    font-size: 0.9em;
+    margin-top: 0.25em;
+}
+
+.usage-today-comparison,
+.usage-week-summary {
+    color: var(--text-muted);
+    font-size: 0.9em;
+    margin: 0.5em 0;
+}
+
+.usage-comparison-label {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.usage-chart {
+    margin: 0;
+}
+
+.usage-chart-bars {
+    display: flex;
+    align-items: stretch;
+    gap: 0.4em;
+    height: 180px;
+}
+
+.usage-chart-bar {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.usage-chart-track {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    min-height: 0;
+    width: 100%;
+}
+
+.usage-chart-value {
+    font-size: 0.75em;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.usage-chart-fill {
+    width: 100%;
+    background-color: var(--accent);
+    border-radius: 3px 3px 0 0;
+    min-height: 1px;
+    transition: height 0.2s ease;
+}
+
+.usage-chart-stack {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 1px;
+    border-radius: 3px 3px 0 0;
+    overflow: hidden;
+    transition: height 0.2s ease;
+}
+
+.usage-chart-segment {
+    width: 100%;
+    min-height: 1px;
+    transition: height 0.2s ease;
+}
+
+.usage-segment-cool { background-color: var(--accent); }
+.usage-segment-heat { background-color: var(--usage-heat); }
+
+.usage-swatch {
+    display: inline-block;
+    width: 0.8em;
+    height: 0.8em;
+    border-radius: 2px;
+    vertical-align: -1px;
+    margin-right: 2px;
+}
+.usage-swatch-cool { background-color: var(--accent); }
+.usage-swatch-heat { background-color: var(--usage-heat); }
+
+.usage-chart-label {
+    font-size: 0.85em;
+    text-align: center;
+    margin-top: 0.4em;
+    color: var(--text);
+}
+
+.usage-chart-grouped .usage-chart-bars {
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 0.6em;
+}
+
+.usage-chart-group.is-today .usage-chart-label {
+    font-weight: 700;
+    color: var(--text);
+}
+
+.usage-chart-group {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-width: 2.6em;
+}
+
+.usage-chart-group-track {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 0.2em;
+    min-height: 0;
+    width: 100%;
+}
+
+.usage-chart-bar-thin {
+    flex: 0 0 0.9em;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.usage-chart-fill.last-year {
+    background-color: var(--text-muted);
+    opacity: 0.55;
+}
+
+.usage-chart-bar-thin.last-year { opacity: 0.55; }
+
+.usage-legend {
+    display: flex;
+    gap: 1em;
+    flex-wrap: wrap;
+    margin-bottom: 0.5em;
+    font-size: 0.85em;
+    color: var(--text-muted);
+}
+
+.usage-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+}
+
+.usage-legend-swatch {
+    display: inline-block;
+    width: 0.9em;
+    height: 0.9em;
+    border-radius: 2px;
+    background-color: var(--accent);
+}
+
+.usage-legend-swatch.last-year {
+    background-color: var(--text-muted);
+    opacity: 0.55;
+}
+
+.usage-legend-swatch.usage-segment-cool { background-color: var(--accent); opacity: 1; }
+.usage-legend-swatch.usage-segment-heat { background-color: var(--usage-heat); opacity: 1; }
+
+.usage-legend-note {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+@media (max-width: 599px) {
+    .usage-chart-bars  { height: 150px; }
+    .usage-chart-value { font-size: 0.7em; }
+    .usage-chart-label { font-size: 0.8em; }
 }

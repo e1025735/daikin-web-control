@@ -37,7 +37,15 @@ if ($method === 'POST') {
 
 if ($method === 'GET') {
     $uri = $_GET['uri'] ?? '';
-    if ($uri !== '/aircon/get_sensor_info' && $uri !== '/aircon/get_control_info') {
+    $allowed_uris = [
+        '/aircon/get_sensor_info',
+        '/aircon/get_control_info',
+        '/aircon/get_week_power',
+        '/aircon/get_year_power',
+        '/aircon/get_week_power_ex',
+        '/aircon/get_year_power_ex',
+    ];
+    if (!in_array($uri, $allowed_uris, true)) {
         http_response_code(405);
         echo json_encode(['error' => 'unsupported uri']);
         exit;
