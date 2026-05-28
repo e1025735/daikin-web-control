@@ -3,8 +3,7 @@
  * CLI worker (should be invoked once per minute)
  *
  * For every unit/slot whose fire_at has passed, send the captured payload
- * to the AC unit via the same set_array_info() the web UI uses, then null
- * out the slot.
+ * to the AC unit then null out the slot.
  */
 
 if (PHP_SAPI !== 'cli') {
@@ -12,10 +11,10 @@ if (PHP_SAPI !== 'cli') {
     exit(1);
 }
 
-require_once __DIR__ . '/engine.php';
+require_once __DIR__ . '/daikin_client.php';
+require_once __DIR__ . '/daikin_response_parser.php';
 require_once __DIR__ . '/timer_store.php';
 
-// If timer featue is not wanted we kill this to not use any cpu
 if (!timer_feature_enabled()) {
     exit(0);
 }
@@ -46,11 +45,12 @@ timer_store_modify(function (&$all) use ($now, &$fired) {
 });
 
 foreach ($fired as $job) {
-    $result = set_array_info('/aircon/set_control_info', $job['unit_ip'], $job['payload']);
     $when = date('c');
-    if ($result === false) {
-        fwrite(STDERR, "[$when] FAIL  {$job['unit_ip']} {$job['slot']}\n");
-    } else {
-        fwrite(STDOUT, "[$when] FIRED {$job['unit_ip']} {$job['slot']} -> $result\n");
+    try {
+        $raw = daikin_post($job['unit_ip'], '/aircon/set_control_info', $job['payload']);
+        daikin_response_parse_expecting_ok($raw);
+        fwrite(STDOUT, "[$when] FIRED {$job['unit_ip']} {$job['slot']} -> $raw\n");
+    } catch (RuntimeException $e) {
+        fwrite(STDERR, "[$when] FAIL  {$job['unit_ip']} {$job['slot']} -> {$e->getMessage()}\n");
     }
 }

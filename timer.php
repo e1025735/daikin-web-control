@@ -29,7 +29,7 @@ $method  = $_SERVER['REQUEST_METHOD'];
 $unit_ip = $_GET['unit_ip'] ?? '';
 $slot    = $_GET['slot']    ?? '';
 
-if ($unit_ip === '' || !filter_var($unit_ip, FILTER_VALIDATE_IP)) {
+if ($unit_ip === '') {
     http_response_code(400);
     echo json_encode(['error' => 'missing or invalid unit_ip']);
     exit;

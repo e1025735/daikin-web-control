@@ -66,13 +66,10 @@ body {
 }
 
 .logo {
-    float: left;
+    display: block;
     width: 100%;
+    margin-bottom: 10px;
     background-color: var(--banner-bg);
-}
-
-.row {
-    padding-left: 1em;
 }
 
 h4 {
@@ -80,24 +77,25 @@ h4 {
     margin-bottom: 10px;
 }
 
-.power-container {
-    width: 20%;
-    padding-left: 1em;
-    float: left;
+.row:has(> .power-container) {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: 1rem;
 }
 
-.timer-container {
-    width: 25%;
-    padding-left: 1em;
-    float: left;
+.power-container,
+.timer-container,
+.temp-container {
+    flex: 0 1 auto;
+    min-width: 0;
+    width: auto;
+    max-width: none;
 }
 
 .temp-container {
-    float: right;
     margin-left: auto;
     padding-right: 2em;
-    width: auto;
-    max-width: none;
 }
 
 .temp-container .btn-light,
@@ -111,29 +109,27 @@ h4 {
 }
 
 @media (max-width: 599px) {
-    .logo {
-        height: auto;
-        margin-bottom: 10px;
+    .row:has(> .power-container) {
+        flex-wrap: wrap;
+        gap: 0;
     }
-    .row { padding-left: 0; }
-    .power-container { width: 45%; }
-    .timer-container { width: 55%; }
-    .temp-container { padding-top: 1em; padding-right: 1em; }
+    .power-container { flex: 0 0 45%}
+    .timer-container { flex: 0 0 55%}
+    .temp-container {
+        flex: 0 1 auto;
+        margin-left: auto;
+        padding-top: 1em;
+        padding-right: 1em;
+    }
     .timer-modal { padding: 1em 0.5em; }
 }
 
 @media (min-width: 600px) and (max-width: 2799px) {
-    .logo {
-        height: auto;
-        margin-bottom: 10px;
+    .temp-container {
+        flex: 0 0 auto;
     }
-    .row { padding-left: 0; }
-    .power-container { width: 25%;}
-    .timer-container { width: 30%;}
-    .temp-container { padding-top: 0; }
     .timer-modal { padding: 1em 0.5em; }
 }
-
 
 @media (min-width: 2800px) {
     .main-container { padding-left: 80px; }

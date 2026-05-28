@@ -3,13 +3,11 @@
  * Shared file-backed timer store. All access is guarded by flock() so the
  * cron worker (timer_worker.php) and the web request handlers (timer.php,
  * api.php's last-control cache) never tear each other's writes.
+ *
+ * Writes go through a `*.tmp` + rename(), so a crash mid-write can't truncate
+ * the existing file.
  */
 
-/*
- * Check the enableTimer flag in config.js. Default to true (feature enabled)
- * if config.js is missing or the flag isn't present, so existing deployments
- * keep working after upgrade without a config change.
- */
 function timer_feature_enabled() {
     $path = __DIR__ . '/config.js';
     $content = @file_get_contents($path);
@@ -47,24 +45,34 @@ function timer_store_read() {
 
 function timer_store_modify(callable $mutator) {
     $path = timer_store_path();
-    $fp = fopen($path, 'c+');
-    if (!$fp) {
+
+    $lock_fp = fopen($path, 'c+');
+    if (!$lock_fp) {
         throw new RuntimeException("cannot open timer store at $path");
     }
-    flock($fp, LOCK_EX);
-    rewind($fp);
-    $raw = stream_get_contents($fp);
+    flock($lock_fp, LOCK_EX);
+    rewind($lock_fp);
+    $raw = stream_get_contents($lock_fp);
     $all = json_decode($raw, true);
     if (!is_array($all)) $all = [];
 
     $mutator($all);
 
-    ftruncate($fp, 0);
-    rewind($fp);
-    fwrite($fp, json_encode($all, JSON_PRETTY_PRINT));
-    fflush($fp);
-    flock($fp, LOCK_UN);
-    fclose($fp);
+    $tmp = $path . '.tmp';
+    if (file_put_contents($tmp, json_encode($all, JSON_PRETTY_PRINT), LOCK_EX) === false) {
+        flock($lock_fp, LOCK_UN);
+        fclose($lock_fp);
+        throw new RuntimeException("cannot write timer store tmp file at $tmp");
+    }
+    if (!rename($tmp, $path)) {
+        @unlink($tmp);
+        flock($lock_fp, LOCK_UN);
+        fclose($lock_fp);
+        throw new RuntimeException("cannot rename $tmp to $path");
+    }
+
+    flock($lock_fp, LOCK_UN);
+    fclose($lock_fp);
 }
 
 function last_control_cache_path($unit_ip) {
@@ -73,17 +81,16 @@ function last_control_cache_path($unit_ip) {
 }
 
 function last_control_cache_write($unit_ip, $json_string) {
-    if (!filter_var($unit_ip, FILTER_VALIDATE_IP)) return;
     $path = last_control_cache_path($unit_ip);
-    $fp = fopen($path, 'c+');
-    if (!$fp) return;
-    flock($fp, LOCK_EX);
-    ftruncate($fp, 0);
-    rewind($fp);
-    fwrite($fp, $json_string);
-    fflush($fp);
-    flock($fp, LOCK_UN);
-    fclose($fp);
+    $tmp  = $path . '.tmp';
+    if (file_put_contents($tmp, $json_string, LOCK_EX) === false) {
+        error_log("last_control_cache_write: cannot write $tmp");
+        return;
+    }
+    if (!rename($tmp, $path)) {
+        @unlink($tmp);
+        error_log("last_control_cache_write: cannot rename $tmp to $path");
+    }
 }
 
 function last_control_cache_read($unit_ip) {
