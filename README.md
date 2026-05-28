@@ -1,7 +1,7 @@
 Daikin-Control
 ==============
 
-![Web Gui Preview](https://github.com/bmoesdijk/daikin-control/blob/master/web_gui-new.png)
+![Web Gui Preview](web_gui.png)
 
 The '''Daikin Emura FTXG-L''' air conditioner comes with a wifi module preinstalled that allows you to control it via internet. Other Daikin airconditioners can be upgraded with a wifi module WDA00001.
 The solution provided by Daikin is a mobile app (very well designed) that allows you to control the air conditioner(s) even remotely, exploiting the REST API of the wifi module.
@@ -28,7 +28,7 @@ Adapt the units params for the IP address(es), names and icons of your unit(s). 
 
 When you have a single unit, only configure the IP address of the first unit. Leave the IP addresses of the other 2 units to the default ("unit2IP" and "unit3IP") since this will prevent the selection buttons on the top of the screen to appear.
 
-![Web Gui Preview](https://github.com/bmoesdijk/daikin-control/blob/master/web_gui-phone.PNG)
+![Web Gui Preview](web_gui-phone.png)
 
 If you also want the web UI to be used as an app on your iPhone, do the following:<br>
 Make sure that the file  apple-touch-icon.png is pressent in the media directory. (i.e.in web/daikin-control-UI-updated/media/apple-touch-icon.png)<br>
