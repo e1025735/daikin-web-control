@@ -131,6 +131,10 @@ Uri                | GET | POST | desc
 /aircon/set_target | | X | ?
 /aircon/get_week_power| X | | Provides weekly and today runtime information (in mn)
 /aircon/get_year_power| X | | Provides yearly runtime information
+/aircon/get_week_power_ex | X | | Weekly energy consumption split by mode (heat/cool). Values in 0.1 kWh units. Newer firmware only (BRP069B4x+).
+/aircon/get_year_power_ex | X | | Yearly energy consumption split by mode (heat/cool). Values in 0.1 kWh units. Newer firmware only (BRP069B4x+).
+/aircon/get_day_power_ex  | X | | Hourly energy consumption per mode for today and yesterday. Newer firmware only.
+/aircon/get_month_power_ex| X | | Daily energy consumption per mode for current and previous month. Newer firmware only.
 /aircon/get_program | X | | ?
 /aircon/set_program | | X | ?
 /aircon/get_scdltimer | X | | Provides information about on/off weekly timer
@@ -140,6 +144,46 @@ Uri                | GET | POST | desc
 /common/set_regioncode | | X | ?
 /common/set_led | | X | ?
 /common/reboot | X |  | reboot the AP
+
+## Per-mode energy endpoints (`_ex` family)
+
+The `_ex` variants expose per-mode (heat vs. cool) energy data that the official Daikin mobile app shows but the standard endpoints don't.
+They're present on BRP069B4x and newer WiFi modules and 404 on older BRP069A4x hardware — so any client should probe `_ex` first and fall back to the runtime-only endpoints.
+
+All values in `_ex` responses are in **0.1 kWh units**.
+
+### `/aircon/get_week_power_ex`
+
+Fourteen daily values per mode, covering today plus the 13 previous days. Position 0 is today, position 13 is 13 days ago — so positions `[0..6]` are *this week* (today + 6 days back) and positions `[7..13]` are *last week* (same weekdays, one week earlier). This is what the official Daikin app uses for its "today vs. yesterday" and "this week vs. last week" comparisons.
+
+```
+ret=OK,s_dayw=4,week_heat=12/8/10/0/0/15/22/14/9/11/0/0/18/24,week_cool=22/18/24/30/15/8/12/19/15/20/28/12/6/10
+```
+
+field      | meaning
+-----------|--------
+`s_dayw`   | Today's weekday index (0 = Sunday, 1 = Monday, …). Useful for labeling but not required, since position 0 is always today.
+`week_heat`| Heat-mode consumption per day (14 values, 0.1 kWh each). Position 0 = today, position 7 = same weekday last week.
+`week_cool`| Cool-mode consumption per day (14 values, 0.1 kWh each). Same layout as `week_heat`.
+
+### `/aircon/get_year_power_ex`
+
+Twelve monthly values per mode for the current and previous year.
+
+```
+ret=OK,curr_year_heat=0/0/0/0/0/0/0/0/0/0/0/0,prev_year_heat=0/0/0/0/0/0/0/0/0/0/0/0,curr_year_cool=0/0/0/0/0/0/0/0/0/0/0/0,prev_year_cool=0/0/0/0/0/0/0/0/0/0/0/0
+```
+
+field             | meaning
+------------------|--------
+`curr_year_heat`  | Heat-mode consumption Jan–Dec for the current year (0.1 kWh).
+`prev_year_heat`  | Heat-mode consumption Jan–Dec for the previous year (0.1 kWh).
+`curr_year_cool`  | Cool-mode consumption Jan–Dec for the current year (0.1 kWh).
+`prev_year_cool`  | Cool-mode consumption Jan–Dec for the previous year (0.1 kWh).
+
+### `/aircon/get_day_power_ex` and `/aircon/get_month_power_ex`
+
+Same shape with `curr_*` / `prev_*` × heat/cool fields, but with 24 hourly values (day endpoint, for today and yesterday) or daily values (month endpoint, for current and previous month).
 
 ## Parameters
 

@@ -114,6 +114,51 @@ export function request_timer() {
     xhr.send();
 }
 
+// On-demand fetchers for the Usage tab. Unlike request_control / request_sensor
+// these don't poll — they're called from usage.js when the user hits Refresh,
+// switches to the tab, or changes unit while the tab is open.
+function request_usage(uri, on_ok, on_err) {
+    const ip = getActiveUnit_IP();
+    if (!ip) { if (on_err) on_err('no active unit'); return; }
+
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState !== 4) return;
+        if (xhr.status === 200) {
+            try {
+                on_ok(JSON.parse(xhr.responseText));
+            } catch (e) {
+                if (on_err) on_err('malformed response');
+            }
+        } else {
+            let msg = 'HTTP ' + xhr.status;
+            try {
+                const err = JSON.parse(xhr.responseText);
+                if (err && err.error) msg = err.error;
+            } catch (e) {}
+            if (on_err) on_err(msg);
+        }
+    };
+    xhr.open('GET', './api.php?uri=' + encodeURIComponent(uri) + '&unit_ip=' + encodeURIComponent(ip), true);
+    xhr.send();
+}
+
+export function request_week_power(on_ok, on_err) {
+    request_usage('/aircon/get_week_power', on_ok, on_err);
+}
+
+export function request_year_power(on_ok, on_err) {
+    request_usage('/aircon/get_year_power', on_ok, on_err);
+}
+
+export function request_week_power_ex(on_ok, on_err) {
+    request_usage('/aircon/get_week_power_ex', on_ok, on_err);
+}
+
+export function request_year_power_ex(on_ok, on_err) {
+    request_usage('/aircon/get_year_power_ex', on_ok, on_err);
+}
+
 // Cancel any pending polls and immediately re-fetch all three streams.
 export function update() {
     clearTimeout(state.control_timeout);

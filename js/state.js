@@ -13,6 +13,7 @@ export const state = {
     sensor_timeout: null,
     timer_refresh_timeout: null,
     timer_countdown_interval: null,
+    usage_cache: {},
 };
 
 export function getActiveUnit_IP() {

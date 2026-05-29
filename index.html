@@ -60,14 +60,26 @@
 			</div>
 		</div>
 
-		<!-- Unit selection (rendered from config.units by js/units.js) -->
-		<div class="row" id="unit-row">
-			<div class="col-md-4 col-sm-6">
+		<!-- Unit selection + tab bar on one row (tabs sit to the right of unit selection) -->
+		<div class="selection-row">
+			<div id="unit-row" class="unit-selection">
 				<h4>Unit Selection</h4>
 				<div class="btn-group" id="unit-buttons" role="group" aria-label="Unit selection"></div>
 			</div>
+			<div class="selection-tabs">
+				<ul class="nav nav-pills tab-bar" id="tab-bar" role="tablist">
+					<li class="nav-item" role="presentation">
+						<button class="nav-link tab-pill active" type="button" role="tab" data-tab="control" id="pill-control" aria-selected="true" aria-controls="tab-control"><i class="fa-solid fa-sliders"></i> Control</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link tab-pill" type="button" role="tab" data-tab="usage" id="pill-usage" aria-selected="false" aria-controls="tab-usage"><i class="fa-solid fa-chart-column"></i> Usage</button>
+					</li>
+				</ul>
+			</div>
 		</div>
 
+		<div class="tab-content">
+		<div class="tab-pane active" id="tab-control" data-tab="control" role="tabpanel" aria-labelledby="pill-control">
 		<div class="row">
 			<!-- ON/OFF -->
 			<div class="power-container">
@@ -161,6 +173,51 @@
 				<br><br><br>
 			</div>
 		</div>
+		</div>
+		<!-- /tab-control -->
+
+		<div class="tab-pane" id="tab-usage" data-tab="usage" role="tabpanel" aria-labelledby="pill-usage">
+			<div class="usage-toolbar">
+				<button type="button" class="btn btn-light" id="usageRefreshBtn" title="Refresh usage data">
+					<i class="fa-solid fa-rotate-right"></i> Refresh
+				</button>
+				<span class="usage-fetched-label" id="usageFetchedLabel"></span>
+			</div>
+
+			<div class="usage-accordion" data-section="today">
+				<button type="button" class="usage-accordion-header" aria-expanded="true">
+					<i class="fa-solid fa-chevron-down usage-accordion-chevron"></i>
+					<span class="usage-accordion-title"><i class="fa-solid fa-sun"></i> Today</span>
+				</button>
+				<div class="usage-accordion-body" id="usageToday">
+					<p class="usage-placeholder text-muted">Tap Refresh to load.</p>
+				</div>
+			</div>
+
+			<div class="usage-accordion" data-section="week">
+				<button type="button" class="usage-accordion-header" aria-expanded="true">
+					<i class="fa-solid fa-chevron-down usage-accordion-chevron"></i>
+					<span class="usage-accordion-title"><i class="fa-solid fa-calendar-week"></i> This week</span>
+				</button>
+				<div class="usage-accordion-body" id="usageWeek">
+					<p class="usage-placeholder text-muted">Tap Refresh to load.</p>
+				</div>
+			</div>
+
+			<div class="usage-accordion" data-section="year">
+				<button type="button" class="usage-accordion-header" aria-expanded="true">
+					<i class="fa-solid fa-chevron-down usage-accordion-chevron"></i>
+					<span class="usage-accordion-title"><i class="fa-solid fa-calendar"></i> This year vs. last year</span>
+				</button>
+				<div class="usage-accordion-body" id="usageYear">
+					<p class="usage-placeholder text-muted">Tap Refresh to load.</p>
+				</div>
+			</div>
+		</div>
+		<!-- /tab-usage -->
+
+		</div>
+		<!-- /.tab-content -->
 	</div>
 </div>
 
