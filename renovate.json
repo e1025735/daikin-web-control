@@ -13,7 +13,6 @@
       "extractVersionTemplate": "^(?<version>.+)$"
     }
   ],
-  "allowedPostUpgradeCommands": ["^scripts/update-fontawesome.sh$"],
   "postUpgradeTasks": {
     "commands": ["bash scripts/update-fontawesome.sh {{{newValue}}}"],
     "fileFilters": ["font-awesome/**"],
