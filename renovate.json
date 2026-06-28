@@ -6,7 +6,9 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["^font-awesome/\\.version$"],
+      "managerFilePatterns": [
+        "/^font-awesome/\\.version$/"
+      ],
       "matchStrings": ["^(?<currentValue>.+?)\\s*$"],
       "depNameTemplate": "FortAwesome/Font-Awesome",
       "datasourceTemplate": "github-releases",
