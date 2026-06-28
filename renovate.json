@@ -14,7 +14,6 @@
     }
   ],
   "allowedPostUpgradeCommands": ["^scripts/update-fontawesome.sh$"],
-  "__comment_postUpgradeTasks": "This will never work since this ain't allowed for the Github Renovator, only selfhosted ones. However this is also a good documentation how to do this on your own",
   "postUpgradeTasks": {
     "commands": ["bash scripts/update-fontawesome.sh {{{newValue}}}"],
     "fileFilters": ["font-awesome/**"],
